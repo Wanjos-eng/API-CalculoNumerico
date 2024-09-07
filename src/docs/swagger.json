@@ -1,0 +1,49 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "API de Cálculo Numérico",
+      "description": "API para resolver equações não lineares",
+      "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/api",
+    "schemes": ["http"],
+    "paths": {
+      "/bisection": {
+        "post": {
+          "summary": "Método da Bissecção",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "input",
+              "description": "Dados de entrada para o método",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "func": { "type": "string" },
+                  "interval": { "type": "array", "items": { "type": "number" } },
+                  "tolerance": { "type": "number" },
+                  "maxIter": { "type": "number" }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Resultado do método",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "root": { "type": "number" },
+                  "iterations": { "type": "number" },
+                  "steps": { "type": "array", "items": { "type": "object" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
