@@ -1,49 +1,246 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "title": "API de Cálculo Numérico",
-      "description": "API para resolver equações não lineares",
-      "version": "1.0.0"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Métodos Numéricos",
+    "description": "Documentação para os métodos numéricos Bissecção e Falsa Posição.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/bisseccao": {
+      "post": {
+        "summary": "Executa o método da Bissecção",
+        "description": "Calcula a raiz de uma função no intervalo dado utilizando o método da Bissecção.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "funcao": {
+                    "type": "string",
+                    "example": "x^2 - 4"
+                  },
+                  "intervalo": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [1, 3]
+                  },
+                  "tolerancia": {
+                    "type": "number",
+                    "example": 0.01
+                  },
+                  "maxIteracao": {
+                    "type": "integer",
+                    "example": 100
+                  }
+                },
+                "required": ["funcao", "intervalo", "tolerancia", "maxIteracao"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado da execução do método da Bissecção",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultado": {
+                      "type": "object",
+                      "properties": {
+                        "raiz": {
+                          "type": "number"
+                        },
+                        "valorFuncao": {
+                          "type": "number"
+                        },
+                        "iteracoes": {
+                          "type": "integer"
+                        },
+                        "convergiu": {
+                          "type": "boolean"
+                        },
+                        "erro": {
+                          "type": "number"
+                        },
+                        "motivoParada": {
+                          "type": "string"
+                        },
+                        "passos": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "iteracao": {
+                                "type": "integer"
+                              },
+                              "intervaloAtual": {
+                                "type": "object",
+                                "properties": {
+                                  "a": {
+                                    "type": "number"
+                                  },
+                                  "b": {
+                                    "type": "number"
+                                  }
+                                }
+                              },
+                              "pontoMedio": {
+                                "type": "number"
+                              },
+                              "valorFuncao": {
+                                "type": "number"
+                              },
+                              "erro": {
+                                "type": "number"
+                              },
+                              "descricao": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos."
+          },
+          "500": {
+            "description": "Erro interno do servidor."
+          }
+        }
+      }
     },
-    "host": "localhost:3000",
-    "basePath": "/api",
-    "schemes": ["http"],
-    "paths": {
-      "/bisection": {
-        "post": {
-          "summary": "Método da Bissecção",
-          "parameters": [
-            {
-              "in": "body",
-              "name": "input",
-              "description": "Dados de entrada para o método",
-              "required": true,
+    "/fp": {
+      "post": {
+        "summary": "Executa o método da Falsa Posição",
+        "description": "Calcula a raiz de uma função no intervalo dado utilizando o método da Falsa Posição.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "func": { "type": "string" },
-                  "interval": { "type": "array", "items": { "type": "number" } },
-                  "tolerance": { "type": "number" },
-                  "maxIter": { "type": "number" }
+                  "funcao": {
+                    "type": "string",
+                    "example": "x^2 - 4"
+                  },
+                  "intervalo": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [1, 3]
+                  },
+                  "tolerancia": {
+                    "type": "number",
+                    "example": 0.01
+                  },
+                  "maxIteracao": {
+                    "type": "integer",
+                    "example": 100
+                  }
+                },
+                "required": ["funcao", "intervalo", "tolerancia", "maxIteracao"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado da execução do método da Falsa Posição",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultado": {
+                      "type": "object",
+                      "properties": {
+                        "raiz": {
+                          "type": "number"
+                        },
+                        "valorFuncao": {
+                          "type": "number"
+                        },
+                        "iteracoes": {
+                          "type": "integer"
+                        },
+                        "convergiu": {
+                          "type": "boolean"
+                        },
+                        "erro": {
+                          "type": "number"
+                        },
+                        "motivoParada": {
+                          "type": "string"
+                        },
+                        "passos": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "iteracao": {
+                                "type": "integer"
+                              },
+                              "intervaloAtual": {
+                                "type": "object",
+                                "properties": {
+                                  "a": {
+                                    "type": "number"
+                                  },
+                                  "b": {
+                                    "type": "number"
+                                  }
+                                }
+                              },
+                              "pontoMedio": {
+                                "type": "number"
+                              },
+                              "valorFuncao": {
+                                "type": "number"
+                              },
+                              "erro": {
+                                "type": "number"
+                              },
+                              "descricao": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Resultado do método",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "root": { "type": "number" },
-                  "iterations": { "type": "number" },
-                  "steps": { "type": "array", "items": { "type": "object" } }
-                }
-              }
-            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos."
+          },
+          "500": {
+            "description": "Erro interno do servidor."
           }
         }
       }
     }
   }
-  
+}
