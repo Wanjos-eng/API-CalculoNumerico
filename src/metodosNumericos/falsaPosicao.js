@@ -3,7 +3,7 @@ const { validarParametros } = require('../services/validacaoParametros');
 
 const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Validação dos parâmetros usando a função externa
-  validarParametros(funcao, intervalo, tolerancia, maxIteracao);
+  validarParametros('falsaPosicao', { funcao, intervalo, tolerancia, maxIteracao });
 
   const f = math.compile(funcao);
   let [a, b] = intervalo;
