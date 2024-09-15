@@ -1,9 +1,9 @@
 const math = require('mathjs');
-const { validarParametros } = require('../services/validacaoParametros')
+const { validarParametros } = require('../services/validacaoParametros'); // Atualize a função de validação
 
 const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Validações de entrada
-  validarParametros(funcao, intervalo, tolerancia, maxIteracao);
+  validarParametros('bisseccao', { funcao, intervalo, tolerancia, maxIteracao });
 
   const f = math.compile(funcao);
   let [a, b] = intervalo;

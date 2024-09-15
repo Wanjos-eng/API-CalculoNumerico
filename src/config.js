@@ -1,5 +1,5 @@
 require('dotenv').config();
 
 module.exports = {
-    port: process.env.PORT
+    port: Number(process.env.PORT) || 3000  // Converte a variável de ambiente para número e define um padrão
 };
