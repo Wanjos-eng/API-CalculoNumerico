@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "API de Métodos Numéricos",
-    "description": "Documentação para os métodos numéricos Bissecção e Falsa Posição.",
+    "description": "Documentação para os métodos numéricos: Bissecção, Falsa Posição, Newton-Raphson e Secante.",
     "version": "1.0.0"
   },
   "servers": [
@@ -14,6 +14,7 @@
   "paths": {
     "/bisseccao": {
       "post": {
+        "tags": ["Métodos Numéricos"],
         "summary": "Executa o método da Bissecção",
         "description": "Calcula a raiz de uma função no intervalo dado utilizando o método da Bissecção.",
         "requestBody": {
@@ -59,55 +60,29 @@
                     "resultado": {
                       "type": "object",
                       "properties": {
-                        "raiz": {
-                          "type": "number"
-                        },
-                        "valorFuncao": {
-                          "type": "number"
-                        },
-                        "iteracoes": {
-                          "type": "integer"
-                        },
-                        "convergiu": {
-                          "type": "boolean"
-                        },
-                        "erro": {
-                          "type": "number"
-                        },
-                        "motivoParada": {
-                          "type": "string"
-                        },
+                        "raiz": { "type": "number" },
+                        "valorFuncao": { "type": "number" },
+                        "iteracoes": { "type": "integer" },
+                        "convergiu": { "type": "boolean" },
+                        "erro": { "type": "number" },
+                        "motivoParada": { "type": "string" },
                         "passos": {
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
-                              "iteracao": {
-                                "type": "integer"
-                              },
+                              "iteracao": { "type": "integer" },
                               "intervaloAtual": {
                                 "type": "object",
                                 "properties": {
-                                  "a": {
-                                    "type": "number"
-                                  },
-                                  "b": {
-                                    "type": "number"
-                                  }
+                                  "a": { "type": "number" },
+                                  "b": { "type": "number" }
                                 }
                               },
-                              "pontoMedio": {
-                                "type": "number"
-                              },
-                              "valorFuncao": {
-                                "type": "number"
-                              },
-                              "erro": {
-                                "type": "number"
-                              },
-                              "descricao": {
-                                "type": "string"
-                              }
+                              "pontoMedio": { "type": "number" },
+                              "valorFuncao": { "type": "number" },
+                              "erro": { "type": "number" },
+                              "descricao": { "type": "string" }
                             }
                           }
                         }
@@ -118,17 +93,14 @@
               }
             }
           },
-          "400": {
-            "description": "Parâmetros inválidos."
-          },
-          "500": {
-            "description": "Erro interno do servidor."
-          }
+          "400": { "description": "Parâmetros inválidos." },
+          "500": { "description": "Erro interno do servidor." }
         }
       }
     },
     "/fp": {
       "post": {
+        "tags": ["Métodos Numéricos"],
         "summary": "Executa o método da Falsa Posição",
         "description": "Calcula a raiz de uma função no intervalo dado utilizando o método da Falsa Posição.",
         "requestBody": {
@@ -174,55 +146,29 @@
                     "resultado": {
                       "type": "object",
                       "properties": {
-                        "raiz": {
-                          "type": "number"
-                        },
-                        "valorFuncao": {
-                          "type": "number"
-                        },
-                        "iteracoes": {
-                          "type": "integer"
-                        },
-                        "convergiu": {
-                          "type": "boolean"
-                        },
-                        "erro": {
-                          "type": "number"
-                        },
-                        "motivoParada": {
-                          "type": "string"
-                        },
+                        "raiz": { "type": "number" },
+                        "valorFuncao": { "type": "number" },
+                        "iteracoes": { "type": "integer" },
+                        "convergiu": { "type": "boolean" },
+                        "erro": { "type": "number" },
+                        "motivoParada": { "type": "string" },
                         "passos": {
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
-                              "iteracao": {
-                                "type": "integer"
-                              },
+                              "iteracao": { "type": "integer" },
                               "intervaloAtual": {
                                 "type": "object",
                                 "properties": {
-                                  "a": {
-                                    "type": "number"
-                                  },
-                                  "b": {
-                                    "type": "number"
-                                  }
+                                  "a": { "type": "number" },
+                                  "b": { "type": "number" }
                                 }
                               },
-                              "pontoMedio": {
-                                "type": "number"
-                              },
-                              "valorFuncao": {
-                                "type": "number"
-                              },
-                              "erro": {
-                                "type": "number"
-                              },
-                              "descricao": {
-                                "type": "string"
-                              }
+                              "pontoMedio": { "type": "number" },
+                              "valorFuncao": { "type": "number" },
+                              "erro": { "type": "number" },
+                              "descricao": { "type": "string" }
                             }
                           }
                         }
@@ -233,118 +179,102 @@
               }
             }
           },
-          "400": {
-            "description": "Parâmetros inválidos."
-          },
-          "500": {
-            "description": "Erro interno do servidor."
-          }
+          "400": { "description": "Parâmetros inválidos." },
+          "500": { "description": "Erro interno do servidor." }
         }
       }
     },
     "/newtonRaphson": {
       "post": {
-        "summary": "Método de Newton-Raphson",
-        "description": "Executa o método de Newton-Raphson",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Parâmetros do método de Newton-Raphson",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "funcao": {
-                  "type": "string"
+        "tags": ["Métodos Numéricos"],
+        "summary": "Executa o método de Newton-Raphson",
+        "description": "Calcula a raiz de uma função utilizando o método de Newton-Raphson.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "funcao": { "type": "string", "example": "x^2 - 4" },
+                  "derivada": { "type": "string", "example": "2*x" },
+                  "chuteInicial": { "type": "number", "example": 1 },
+                  "tolerancia": { "type": "number", "example": 0.01 },
+                  "maxIteracao": { "type": "integer", "example": 100 }
                 },
-                "derivada": {
-                  "type": "string"
-                },
-                "chuteInicial": {
-                  "type": "number"
-                },
-                "tolerancia": {
-                  "type": "number"
-                },
-                "maxIteracao": {
-                  "type": "number"
-                }
+                "required": ["funcao", "derivada", "chuteInicial", "tolerancia", "maxIteracao"]
               }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Resposta bem-sucedida",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "resultado": {
-                  "type": "string"
+            "description": "Resultado da execução do método de Newton-Raphson",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "raiz": { "type": "number" },
+                    "valorFuncao": { "type": "number" },
+                    "iteracoes": { "type": "integer" },
+                    "convergiu": { "type": "boolean" },
+                    "erro": { "type": "number" },
+                    "motivoParada": { "type": "string" }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Parâmetros inválidos."
-          },
-          "500": {
-            "description": "Erro interno do servidor."
-          }
+          "400": { "description": "Parâmetros inválidos." },
+          "500": { "description": "Erro interno do servidor." }
         }
       }
     },
     "/secante": {
       "post": {
-        "summary": "Método da Secante",
-        "description": "Executa o método da Secante",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Parâmetros do método da Secante",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "funcao": {
-                  "type": "string"
+        "tags": ["Métodos Numéricos"],
+        "summary": "Executa o método da Secante",
+        "description": "Calcula a raiz de uma função utilizando o método da Secante.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "funcao": { "type": "string", "example": "x^2 - 4" },
+                  "x0": { "type": "number", "example": 1 },
+                  "x1": { "type": "number", "example": 3 },
+                  "tolerancia": { "type": "number", "example": 0.01 },
+                  "maxIteracao": { "type": "integer", "example": 100 }
                 },
-                "x0": {
-                  "type": "number"
-                },
-                "x1": {
-                  "type": "number"
-                },
-                "tolerancia": {
-                  "type": "number"
-                },
-                "maxIteracao": {
-                  "type": "number"
-                }
+                "required": ["funcao", "x0", "x1", "tolerancia", "maxIteracao"]
               }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Resposta bem-sucedida",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "resultado": {
-                  "type": "string"
+            "description": "Resultado da execução do método da Secante",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "raiz": { "type": "number" },
+                    "valorFuncao": { "type": "number" },
+                    "iteracoes": { "type": "integer" },
+                    "convergiu": { "type": "boolean" },
+                    "erro": { "type": "number" },
+                    "motivoParada": { "type": "string" }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Parâmetros inválidos."
-          },
-          "500": {
-            "description": "Erro interno do servidor."
-          }
+          "400": { "description": "Parâmetros inválidos." },
+          "500": { "description": "Erro interno do servidor." }
         }
       }
     }
