@@ -1,9 +1,9 @@
-const { port } = require('./config');
+const { port } = require('./config/dotenv/dotenvConfig');
 const express = require('express');
 const rotas = require('./rotas');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./docs/swagger.json');
+const swaggerDocument = require('./config/swagger/docs/swagger.json');
 
 const app = express();
 
