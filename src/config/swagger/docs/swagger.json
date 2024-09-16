@@ -241,6 +241,112 @@
           }
         }
       }
+    },
+    "/newtonRaphson": {
+      "post": {
+        "summary": "Método de Newton-Raphson",
+        "description": "Executa o método de Newton-Raphson",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parâmetros do método de Newton-Raphson",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "funcao": {
+                  "type": "string"
+                },
+                "derivada": {
+                  "type": "string"
+                },
+                "chuteInicial": {
+                  "type": "number"
+                },
+                "tolerancia": {
+                  "type": "number"
+                },
+                "maxIteracao": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resultado": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos."
+          },
+          "500": {
+            "description": "Erro interno do servidor."
+          }
+        }
+      }
+    },
+    "/secante": {
+      "post": {
+        "summary": "Método da Secante",
+        "description": "Executa o método da Secante",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parâmetros do método da Secante",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "funcao": {
+                  "type": "string"
+                },
+                "x0": {
+                  "type": "number"
+                },
+                "x1": {
+                  "type": "number"
+                },
+                "tolerancia": {
+                  "type": "number"
+                },
+                "maxIteracao": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resultado": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos."
+          },
+          "500": {
+            "description": "Erro interno do servidor."
+          }
+        }
+      }
     }
   }
 }
