@@ -1,19 +1,22 @@
 const { metodoBisseccao } = require('../metodosNumericos/bisseccao');
+const { salvarContexto } = require('../services/contextoService');
+const { validarParametros } = require('../services/validacaoParametros');
 
-const bisseccao = (req, res) => {
-  const { funcao, intervalo, tolerancia, maxIteracao } = req.body;
+const bisseccao = async (req, res) => {
+  const params = req.body;
 
-  // Validação dos parâmetros recebidos
-  if (!funcao || !Array.isArray(intervalo) || typeof tolerancia !== 'number' || typeof maxIteracao !== 'number') {
-    return res.status(400).json({ error: 'Parâmetros inválidos. Verifique a função, intervalo, tolerância e número máximo de iterações.' });
+  try {
+    validarParametros('bisseccao', params);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
   }
 
   try {
-    // Executa o método da Bissecção
-    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-
-    // Retorna o resultado do cálculo
-    return res.json(resultado);
+    const resultado = metodoBisseccao(params.funcao, params.intervalo, params.tolerancia, params.maxIteracao);
+    // Salvar o contexto usando o userId do cookie
+    await salvarContexto(req.cookies.userId, { ...params, resultado });
+    // Retornar o resultado ao cliente
+    return res.status(200).json({ resultado });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

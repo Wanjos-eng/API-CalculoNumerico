@@ -1,19 +1,20 @@
 const { metodoSecante } = require('../metodosNumericos/secante');
+const { salvarContexto } = require('../services/contextoService');
+const { validarParametros } = require('../services/validacaoParametros');
 
-const secante = (req, res) => {
-  const { funcao, x0, x1, tolerancia, maxIteracao } = req.body;
+const secante = async (req, res) => {
+  const params = req.body;
 
-  // Validação dos parâmetros recebidos
-  if (!funcao || typeof x0 !== 'number' || typeof x1 !== 'number' || typeof tolerancia !== 'number' || typeof maxIteracao !== 'number') {
-    return res.status(400).json({ error: 'Parâmetros inválidos. Verifique a função, os pontos iniciais, tolerância e número máximo de iterações.' });
+  try {
+    validarParametros('secante', params);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
   }
 
   try {
-    // Executa o método da Secante
-    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-
-    // Retorna o resultado do cálculo
-    return res.json({ resultado });
+    const resultado = metodoSecante(params.funcao, params.x0, params.x1, params.tolerancia, params.maxIteracao);
+    await salvarContexto(req.cookies.userId, { ...params, resultado });
+    return res.status(200).json({ resultado });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

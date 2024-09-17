@@ -1,19 +1,20 @@
 const { metodoFalsaPosicao } = require('../metodosNumericos/falsaPosicao');
+const { salvarContexto } = require('../services/contextoService');
+const { validarParametros } = require('../services/validacaoParametros');
 
-const falsaPosicao = (req, res) => {
-  const { funcao, intervalo, tolerancia, maxIteracao } = req.body;
+const falsaPosicao = async (req, res) => {
+  const params = req.body;
 
-  // Validação dos parâmetros recebidos
-  if (!funcao || !intervalo || intervalo.length !== 2 || typeof tolerancia !== 'number' || typeof maxIteracao !== 'number') {
-    return res.status(400).json({ error: 'Parâmetros inválidos. Verifique a função, intervalo, tolerância e número máximo de iterações.' });
+  try {
+    validarParametros('falsaPosicao', params);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
   }
 
   try {
-    // Executa o método da Falsa Posição
-    const resultado = metodoFalsaPosicao(funcao, intervalo, tolerancia, maxIteracao);
-
-    // Retorna o resultado do cálculo
-    return res.json({ resultado });
+    const resultado = metodoFalsaPosicao(params.funcao, params.intervalo, params.tolerancia, params.maxIteracao);
+    await salvarContexto(req.cookies.userId, { ...params, resultado });
+    return res.status(200).json({ resultado });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
