@@ -5,7 +5,7 @@ npm install express dotenv mathjs cors swagger-jsdoc swagger-ui-express
 npm install @google/generative-ai
 npm install cookie-parser //Escreve cookie nas requisições HTTP
 npm install uuid
-npm install redis //controle de memoria cache por usuario
+npm install node-cache //controle de memoria cache por usuario
 npm install -D nodemon
 
 ou
