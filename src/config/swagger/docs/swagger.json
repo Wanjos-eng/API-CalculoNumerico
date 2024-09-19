@@ -277,6 +277,78 @@
           "500": { "description": "Erro interno do servidor." }
         }
       }
+    },
+    "/perguntar": {
+      "post": {
+        "tags": ["Inteligência Artificial"],
+        "summary": "Faz uma pergunta para a IA",
+        "description": "Envia uma pergunta para a IA com base no contexto da última execução de métodos numéricos.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pergunta": {
+                    "type": "string",
+                    "example": "Qual é o próximo passo na resolução?"
+                  }
+                },
+                "required": ["pergunta"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta da IA com o contexto da última execução",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "contexto": {
+                      "type": "object",
+                      "description": "Dados da última execução de um método numérico"
+                    },
+                    "respostaIA": {
+                      "type": "string",
+                      "description": "Resposta fornecida pela IA"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de requisição, contexto não encontrado ou pergunta não fornecida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string", "example": "Nenhum contexto encontrado." }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string", "example": "Erro ao processar a pergunta." }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
