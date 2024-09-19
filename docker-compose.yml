@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - redis
+    environment:
+      - GEMINI_KEY=${GEMINI_KEY}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - .:/app
+      - /app/node_modules
+  redis:
+    image: 'redis:alpine'
+    command: redis-server
+    volumes:
+      - redisdata:/data
+
+volumes:
+  redisdata:

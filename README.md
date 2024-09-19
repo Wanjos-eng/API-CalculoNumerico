@@ -3,7 +3,8 @@
 //Ate o momento essas são as bibliotecas necessarias para que a aplicação rode sem problemas
 npm install express dotenv mathjs cors swagger-jsdoc swagger-ui-express 
 npm install @google/generative-ai
-npm install cookie-parser //Escreve cookie nas requisições HTTP
+npm install cookie-parser //Escreve cookie nas requisições HTTP usado no desenvolvimento
+npm install redis //Usado na fase de produção
 npm install uuid
 npm install node-cache //controle de memoria cache por usuario
 npm install -D nodemon
