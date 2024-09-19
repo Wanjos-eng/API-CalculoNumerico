@@ -8,7 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Copiar o arquivo .env.docker e renomear para .env dentro do contêiner
-COPY .env.docker .env
+#Desenvolvimento usar o .env.docker
+#COPY .env.docker .env
 
 # Instalar as dependências de produção
 RUN npm install --production
