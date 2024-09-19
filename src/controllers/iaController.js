@@ -1,4 +1,3 @@
-// controllers/iaController.js
 const { recuperarContexto } = require('../services/contextoService');
 const { enviarPerguntaIA } = require('../services/geminiService');
 

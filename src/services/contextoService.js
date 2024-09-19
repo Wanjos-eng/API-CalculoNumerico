@@ -14,32 +14,40 @@ module.exports = { salvarContexto, recuperarContexto };
 */
 
 //Config de cache usada no ambiente de produção
-// services/contextoService.js
 const redis = require('redis');
 
-const client = redis.createClient({
-  socket: {
-    host: process.env.REDIS_HOST || '127.0.0.1',
-    port: process.env.REDIS_PORT || 6379,
-  },
-  password: process.env.REDIS_PASSWORD || undefined, // Se o Redis exigir autenticação
-});
+let client;
 
-client.on('error', (err) => console.error('Redis Client Error', err));
+const initRedisClient = () => {
+  if (!client) {
+    client = redis.createClient({
+      socket: {
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        port: process.env.REDIS_PORT || 6379,
+      },
+      password: process.env.REDIS_PASSWORD || undefined,
+    });
 
-(async () => {
-  await client.connect();
-})();
+    client.on('error', (err) => console.error('Redis Client Error', err));
+
+    (async () => {
+      await client.connect();
+    })();
+  }
+  return client;
+};
 
 const salvarContexto = async (chave, dados) => {
+  const client = initRedisClient();
   try {
-    await client.set(chave, JSON.stringify(dados), { EX: 3600 }); // Expiração em 1 hora
+    await client.set(chave, JSON.stringify(dados), { EX: 3600 });
   } catch (error) {
     console.error('Erro ao salvar no cache:', error);
   }
 };
 
 const recuperarContexto = async (chave) => {
+  const client = initRedisClient();
   try {
     const data = await client.get(chave);
     return JSON.parse(data);

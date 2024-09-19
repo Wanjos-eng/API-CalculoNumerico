@@ -1,5 +1,5 @@
 const express = require('express');
-const { bisseccao } = require('./controllers/biseccaoController');
+const { bisseccao } = require('./controllers/bisseccaoController');
 const { falsaPosicao } = require('./controllers/falsaPosicaoController');
 const { newtonRaphson } = require('./controllers/newtonController');
 const { secante } = require('./controllers/secanteController');
