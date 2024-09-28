@@ -2,14 +2,30 @@ const math = require('mathjs');
 const { validarParametros } = require('../services/validacaoParametros');
 
 const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
-  validarParametros('secante', {funcao, x0, x1, tolerancia, maxIteracao});
+  validarParametros('secante', { funcao, x0, x1, tolerancia, maxIteracao });
 
   const f = math.compile(funcao);
 
   let x0_ = x0;
   let x1_ = x1;
-  let fx0 = f.evaluate({ x: x0_ });
-  let fx1 = f.evaluate({ x: x1_ });
+  let fx0, fx1;
+
+  try {
+    fx0 = f.evaluate({ x: x0_ });
+    fx1 = f.evaluate({ x: x1_ });
+  } catch (error) {
+    return { error: 'Erro na avaliação da função.' };
+  }
+
+  // **Mover a verificação para antes do loop**
+  if (fx0 === fx1) {
+    return {
+      error: 'Divisão por zero, a função não deve ser constante no intervalo.',
+      iteracao: 0,
+      xAtual: x1_,
+      valorFuncao: fx1
+    };
+  }
 
   let iteracao = 0;
   let erro = Math.abs(x1_ - x0_);
@@ -27,7 +43,13 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
 
     // Cálculo do novo ponto
     const xNovo = x1_ - fx1 * (x1_ - x0_) / (fx1 - fx0);
-    const fxNovo = f.evaluate({ x: xNovo });
+    let fxNovo;
+    try {
+      fxNovo = f.evaluate({ x: xNovo });
+    } catch (error) {
+      return { error: 'Erro na avaliação da função durante as iterações.' };
+    }
+
     erro = Math.abs(xNovo - x1_);
 
     passos.push({

@@ -10,8 +10,36 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let fa = f.evaluate({ x: a });
   let fb = f.evaluate({ x: b });
 
+  // Verificação se a raiz está em um dos extremos
+  if (fa === 0) {
+    return {
+      resultado: {
+        raiz: a,
+        valorFuncao: fa,
+        iteracoes: 0,
+        convergiu: true,
+        erro: 0,
+        motivoParada: 'Tolerância atingida',
+        passos: []
+      }
+    };
+  }
+  if (fb === 0) {
+    return {
+      resultado: {
+        raiz: b,
+        valorFuncao: fb,
+        iteracoes: 0,
+        convergiu: true,
+        erro: 0,
+        motivoParada: 'Tolerância atingida',
+        passos: []
+      }
+    };
+  }
+
   if (fa * fb >= 0) {
-    return { 
+    return {
       error: 'A função deve mudar de sinal no intervalo dado.',
       fa: fa,
       fb: fb
@@ -23,6 +51,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let c, fc, erro;
 
   while (iteracao < maxIteracao) {
+    // Calcular o ponto de falsa posição
     c = (a * fb - b * fa) / (fb - fa);
     fc = f.evaluate({ x: c });
     erro = Math.abs(fc);
@@ -34,10 +63,13 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
       descricao = `A função muda de sinal entre [${a}, ${c}].`;
       b = c;
       fb = fc;
-    } else {
+    } else if (fc * fb < 0) {
       descricao = `A função muda de sinal entre [${c}, ${b}].`;
       a = c;
       fa = fc;
+    } else {
+      // Caso em que fc é zero ou próximo de zero, encontramos a raiz
+      break;
     }
 
     passos.push({
@@ -49,6 +81,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
       descricao: descricao
     });
 
+    // Critério de parada
     if (erro < tolerancia || Math.abs(b - a) < tolerancia) {
       break;
     }
@@ -57,8 +90,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   const convergiu = erro < tolerancia;
-  const motivoParada = convergiu ? 'Tolerância atingida' : 
-                        (iteracao === maxIteracao ? 'Número máximo de iterações atingido' : 'Intervalo menor que a tolerância');
+  const motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido';
 
   const resultado = {
     raiz: c,

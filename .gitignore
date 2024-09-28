@@ -1,5 +1,6 @@
 node_modules
 .vscode
-.env
-.env.docker
+#.env
+#.env.docker
+#.env.test
 coverage/

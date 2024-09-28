@@ -11,6 +11,34 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let fb = f.evaluate({ x: b });
 
   // Teste do intervalo
+  if (fa === 0) {
+    return {
+      resultado: {
+        raiz: a,
+        valorFuncao: fa,
+        iteracoes: 0,
+        convergiu: true,
+        erro: 0,
+        motivoParada: 'Raiz encontrada no extremo do intervalo',
+        passos: []
+      }
+    };
+  }
+
+  if (fb === 0) {
+    return {
+      resultado: {
+        raiz: b,
+        valorFuncao: fb,
+        iteracoes: 0,
+        convergiu: true,
+        erro: 0,
+        motivoParada: 'Raiz encontrada no extremo do intervalo',
+        passos: []
+      }
+    };
+  }
+
   if (fa * fb >= 0) {
     return { 
       error: 'A função deve mudar de sinal no intervalo dado.',
@@ -61,9 +89,8 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     iteracao++;
   }
 
-  const convergiu = erro < tolerancia;
-  const motivoParada = convergiu ? 'Tolerância atingida' : 
-                        (iteracao === maxIteracao ? 'Número máximo de iterações atingido' : 'Intervalo menor que a tolerância');
+  const convergiu = erro < tolerancia || Math.abs(b - a) < tolerancia;
+  const motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido';
 
   // Estruturando o resultado
   const resultado = {
