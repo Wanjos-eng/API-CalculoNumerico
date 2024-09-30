@@ -3,17 +3,16 @@ const { metodoBisseccao } = require('../../src/metodosNumericos/bisseccao');
 
 describe('Método da Bissecção', () => {
   // Caso de Teste 1: Raiz no Intervalo
-  test('Deve encontrar a raiz da função x^2 - 4 no intervalo [0, 5]', () => {
+  test('Deve encontrar a raiz da função f(x) = x^2 - 4 no intervalo [0, 5]', () => {
     const funcao = 'x^2 - 4';
     const intervalo = [0, 5];
     const tolerancia = 0.001;
     const maxIteracao = 100;
 
     const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    console.log(resultado); // Para depuração
-
+    
     if (resultado.error) {
-      throw new Error(resultado.error);
+        throw new Error(resultado.error);
     }
 
     expect(resultado.resultado.convergiu).toBe(true);
@@ -29,7 +28,7 @@ describe('Método da Bissecção', () => {
     const maxIteracao = 100;
 
     const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    console.log(resultado); // Para depuração
+    //console.log(resultado); // Para depuração
 
     if (resultado.error) {
       throw new Error(resultado.error);
@@ -47,12 +46,11 @@ describe('Método da Bissecção', () => {
     const tolerancia = 0.001;
     const maxIteracao = 100;
 
-    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    console.log(resultado); // Para depuração
-
-    expect(resultado).toHaveProperty('error');
-    expect(resultado.error).toBe('A função deve mudar de sinal no intervalo dado.');
+    expect(() => {
+        metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+    }).toThrow('A função deve mudar de sinal no intervalo dado.');
   });
+
 
   // Caso de Teste 4: Máximo de Iterações Atingido sem Convergência
   test('Deve parar após o número máximo de iterações sem convergir para a função f(x) = cos(x) - x no intervalo [0, 1] com tolerância 1e-10 e maxIteracao 5', () => {
@@ -62,7 +60,7 @@ describe('Método da Bissecção', () => {
     const maxIteracao = 5;
 
     const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    console.log(resultado); // Para depuração
+    //console.log(resultado); // Para depuração
 
     if (resultado.error) {
       throw new Error(resultado.error);
@@ -81,7 +79,7 @@ describe('Método da Bissecção', () => {
     const maxIteracao = 100;
 
     const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    console.log(resultado); // Para depuração
+    //console.log(resultado); // Para depuração
 
     if (resultado.error) {
       throw new Error(resultado.error);
@@ -100,7 +98,7 @@ describe('Método da Bissecção', () => {
     const maxIteracao = 100;
 
     const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    console.log(resultado); // Para depuração
+    //console.log(resultado); // Para depuração
 
     if (resultado.error) {
       throw new Error(resultado.error);
@@ -119,7 +117,7 @@ describe('Método da Bissecção', () => {
     const maxIteracao = 100;
 
     const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    console.log(resultado); // Para depuração
+    //console.log(resultado); // Para depuração
 
     if (resultado.error) {
       throw new Error(resultado.error);
@@ -128,5 +126,120 @@ describe('Método da Bissecção', () => {
     expect(resultado.resultado.convergiu).toBe(true);
     expect(resultado.resultado.raiz).toBeCloseTo(3, 3);
     expect(resultado.resultado.motivoParada).toBe('Tolerância atingida');
+  });
+
+  // Caso de Teste 8: Raiz no Endpoint (f(b) = 0)
+  test('Deve identificar a raiz no endpoint b = 2 para a função f(x) = x - 2 no intervalo [1, 2]', () => {
+    const funcao = 'x - 2';
+    const intervalo = [1, 2];
+    const tolerancia = 0.001;
+    const maxIteracao = 100;
+
+    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+    //console.log(resultado); // Para depuração
+
+    if (resultado.error) {
+      throw new Error(resultado.error);
+    }
+
+    expect(resultado.resultado.convergiu).toBe(true);
+    expect(resultado.resultado.raiz).toBeCloseTo(2, 3);
+    expect(resultado.resultado.motivoParada).toBe('Raiz encontrada no extremo do intervalo');
+  });
+
+  test('Deve encontrar a raiz para f(x) = x * log(x) - 1 no intervalo [2, 3]', () => {
+    const funcao = 'x * log(x,10)-1';
+    const intervalo = [2, 3];
+    const tolerancia = 0.001;
+    const maxIteracao = 100;
+
+    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+    //console.log(resultado); // Para depuração
+
+    if (resultado.error) {
+        throw new Error(resultado.error);
+    }
+
+    expect(resultado.resultado.convergiu).toBe(true);
+    expect(resultado.resultado.motivoParada).toBe('Tolerância atingida'); // Ou 'Raiz encontrada no extremo do intervalo' se apropriado
+});
+
+test('Deve encontrar a raiz para f(x) = x^3 - x - 1 no intervalo [1, 2]', () => {
+    const funcao = 'x^3 - x - 1';
+    const intervalo = [1, 2];
+    const tolerancia = 0.001;
+    const maxIteracao = 100;
+
+    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+    //console.log(resultado); // Para depuração
+
+    if (resultado.error) {
+        throw new Error(resultado.error);
+    }
+
+    expect(resultado.resultado.convergiu).toBe(true);
+    expect(resultado.resultado.motivoParada).toBe('Tolerância atingida'); // Ou 'Raiz encontrada no extremo do intervalo' se apropriado
+});
+
+test('Deve encontrar a raiz para f(x) = e^x + x no intervalo [-1, 0]', () => {
+    const funcao = 'exp(x) + x';
+    const intervalo = [-1, 0];
+    const tolerancia = 0.001;
+    const maxIteracao = 100;
+
+    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+    //console.log(resultado); // Para depuração
+
+    if (resultado.error) {
+        throw new Error(resultado.error);
+    }
+
+    expect(resultado.resultado.convergiu).toBe(true);
+    expect(resultado.resultado.motivoParada).toBe('Tolerância atingida'); // Ou 'Raiz encontrada no extremo do intervalo' se apropriado
+  });
+
+  test('Deve lançar erro ao encontrar uma descontinuidade no intervalo [-1, 1]', () => {
+    const funcao = '1/x'; // Descontinuidade em x = 0
+    const intervalo = [-1, 1];
+    const tolerancia = 0.001;
+    const maxIteracao = 100;
+
+    expect(() => {
+        metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+    }).toThrow('A função parece ter uma descontinuidade no intervalo fornecido.');
+  });
+
+  test('Deve encontrar a raiz da função x^3 - x no intervalo [0.5, 1.5]', () => {
+    const funcao = 'x^3 - x';
+    const intervalo = [0.5, 1.5];
+    const tolerancia = 0.001;
+    const maxIteracao = 100;
+
+    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+
+    if (resultado.error) {
+        throw new Error(resultado.error);
+    }
+
+    expect(resultado.resultado.convergiu).toBe(true);
+    expect(resultado.resultado.raiz).toBeCloseTo(1, 3);
+    expect(resultado.resultado.motivoParada).toBe('Tolerância atingida');
+  });
+
+  test('Deve encontrar a raiz da função f(x) = x^4 - 2*x^3 - 4*x^2 + 4*x + 4 no intervalo [1.3, 1.5]', () => {
+    const funcao = 'x^4 - 2*x^3 - 4*x^2 + 4*x + 4'; // A função dada
+    const intervalo = [1.3, 1.5]; // Intervalo para buscar a raiz
+    const tolerancia = 0.01; // Tolerância
+    const maxIteracao = 100; // Número máximo de iterações
+
+    const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
+    
+    if (resultado.error) {
+        throw new Error(resultado.error);
+    }
+
+    expect(resultado.resultado.convergiu).toBe(true);
+    expect(resultado.resultado.motivoParada).toBe('Tolerância atingida');
+    expect(resultado.resultado.raiz).toBeCloseTo(1.414, 2); // Raiz aproximada entre 1.3 e 1.5
   });
 });

@@ -11,6 +11,16 @@ const metodoNewtonRaphson = (funcao, derivada, chuteInicial, tolerancia, maxIter
   let fx = f.evaluate({ x: x });
   let dfx = df.evaluate({ x: x });
 
+  // Verificação se o valor da função é muito grande no chute inicial
+  if (Math.abs(fx) > 100) { // Ajuste este limite conforme necessário
+    return {
+      error: 'Chute inicial muito longe da raiz.',
+      iteracao: 0,
+      xAtual: x,
+      valorFuncao: fx
+    };
+  }
+
   let iteracao = 0;
   let erro = Math.abs(fx);
   let passos = [];

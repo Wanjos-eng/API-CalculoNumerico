@@ -2,87 +2,53 @@ const math = require('mathjs');
 const { validarParametros } = require('../services/validacaoParametros');
 
 const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
-  validarParametros('secante', { funcao, x0, x1, tolerancia, maxIteracao });
+    // Validação inicial dos parâmetros fornecidos
+    validarParametros('secante', { funcao, x0, x1, tolerancia, maxIteracao });
 
-  const f = math.compile(funcao);
+    // Inicializa variáveis para iterações
+    let iteracao = 0;
+    let erro = tolerancia + 1;
+    let xPrev = x0;
+    let xCurr = x1;
 
-  let x0_ = x0;
-  let x1_ = x1;
-  let fx0, fx1;
+    // Iteração do método da secante
+    while (erro > tolerancia && iteracao < maxIteracao) {
+        // Calcula o valor da função para os pontos atuais
+        const fXPrev = math.evaluate(funcao, { x: xPrev });
+        const fXCurr = math.evaluate(funcao, { x: xCurr });
 
-  try {
-    fx0 = f.evaluate({ x: x0_ });
-    fx1 = f.evaluate({ x: x1_ });
-  } catch (error) {
-    return { error: 'Erro na avaliação da função.' };
-  }
+        // Verifica se a função retorna um valor inválido (possível descontinuidade)
+        if (!isFinite(fXCurr)) {
+            throw new Error('A função parece ter uma descontinuidade.');
+        }
 
-  // **Mover a verificação para antes do loop**
-  if (fx0 === fx1) {
-    return {
-      error: 'Divisão por zero, a função não deve ser constante no intervalo.',
-      iteracao: 0,
-      xAtual: x1_,
-      valorFuncao: fx1
-    };
-  }
+        // Verifica divisão por zero com uma tolerância numérica pequena
+        if (Math.abs(fXCurr - fXPrev) < 1e-12) {
+          // Se os valores estão muito próximos de zero, podemos considerar que é uma raiz múltipla
+          if (Math.abs(fXCurr) < 1e-12 && Math.abs(fXPrev) < 1e-12) {
+              throw new Error('Raiz múltipla detectada. Não é possível continuar o cálculo.');
+          } else {
+              throw new Error('Divisão por zero detectada. Não é possível continuar o cálculo.');
+          }
+      }
+               
+        // Fórmula do método da secante
+        const xNext = xCurr - (fXCurr * (xCurr - xPrev)) / (fXCurr - fXPrev);
 
-  let iteracao = 0;
-  let erro = Math.abs(x1_ - x0_);
-  let passos = [];
-
-  while (erro > tolerancia && iteracao < maxIteracao) {
-    if (fx1 === fx0) {
-      return {
-        error: 'Divisão por zero, a função não deve ser constante no intervalo.',
-        iteracao: iteracao,
-        xAtual: x1_,
-        valorFuncao: fx1
-      };
+        // Atualiza erro e variáveis
+        erro = Math.abs(xNext - xCurr);
+        xPrev = xCurr;
+        xCurr = xNext;
+        iteracao++;
     }
 
-    // Cálculo do novo ponto
-    const xNovo = x1_ - fx1 * (x1_ - x0_) / (fx1 - fx0);
-    let fxNovo;
-    try {
-      fxNovo = f.evaluate({ x: xNovo });
-    } catch (error) {
-      return { error: 'Erro na avaliação da função durante as iterações.' };
+    // Verifica se o método convergiu
+    if (erro > tolerancia) {
+        throw new Error('O método da secante não convergiu dentro do número máximo de iterações.');
     }
 
-    erro = Math.abs(xNovo - x1_);
-
-    passos.push({
-      iteracao: iteracao + 1,
-      x0: x0_,
-      x1: x1_,
-      xNovo: xNovo,
-      valorFuncao: fxNovo,
-      erro: erro
-    });
-
-    x0_ = x1_;
-    x1_ = xNovo;
-    fx0 = fx1;
-    fx1 = fxNovo;
-
-    iteracao++;
-  }
-
-  const convergiu = erro < tolerancia;
-  const motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido';
-
-  const resultado = {
-    raiz: x1_,
-    valorFuncao: fx1,
-    iteracoes: iteracao,
-    convergiu: convergiu,
-    erro: erro,
-    motivoParada: motivoParada,
-    passos: passos
-  };
-
-  return { resultado };
+    // Retorna a raiz aproximada e o número de iterações
+    return { raiz: xCurr, iteracoes: iteracao };
 };
 
 module.exports = { metodoSecante };

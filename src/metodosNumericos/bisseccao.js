@@ -1,17 +1,22 @@
 const math = require('mathjs');
-const { validarParametros } = require('../services/validacaoParametros'); // Atualize a função de validação
+const { validarParametros } = require('../services/validacaoParametros');
 
 const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Validações de entrada
   validarParametros('bisseccao', { funcao, intervalo, tolerancia, maxIteracao });
+
+  //console.log('Parâmetros recebidos:', { funcao, intervalo, tolerancia, maxIteracao });
 
   const f = math.compile(funcao);
   let [a, b] = intervalo;
   let fa = f.evaluate({ x: a });
   let fb = f.evaluate({ x: b });
 
+  //console.log(`fa: ${fa}, fb: ${fb} (Intervalo: [${a}, ${b}])`);
+
   // Teste do intervalo
   if (fa === 0) {
+    //console.log(`Raiz encontrada em a: ${a}`);
     return {
       resultado: {
         raiz: a,
@@ -26,6 +31,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   if (fb === 0) {
+    //console.log(`Raiz encontrada em b: ${b}`);
     return {
       resultado: {
         raiz: b,
@@ -40,11 +46,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   if (fa * fb >= 0) {
-    return { 
-      error: 'A função deve mudar de sinal no intervalo dado.',
-      fa: fa,
-      fb: fb
-    };
+    throw new Error('A função deve mudar de sinal no intervalo dado.');
   }
 
   let passos = [];
@@ -56,6 +58,11 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     c = (a + b) / 2;
     fc = f.evaluate({ x: c });
     erro = Math.abs(fc);
+
+    // Verifica se há descontinuidade
+    if (!isFinite(fc) || isNaN(fc)) {
+      throw new Error('A função parece ter uma descontinuidade no intervalo fornecido.');
+    }
 
     // Determinando o próximo intervalo
     let intervaloAtual = { a, b };
@@ -83,27 +90,34 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
 
     // Critérios de parada
     if (erro < tolerancia || Math.abs(b - a) < tolerancia) {
-      break;
+      return {
+        resultado: {
+          raiz: c,
+          valorFuncao: fc,
+          iteracoes: iteracao + 1,
+          convergiu: true,
+          erro: erro,
+          motivoParada: 'Tolerância atingida',
+          passos: passos
+        }
+      };
     }
 
     iteracao++;
   }
 
-  const convergiu = erro < tolerancia || Math.abs(b - a) < tolerancia;
-  const motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido';
-
-  // Estruturando o resultado
-  const resultado = {
-    raiz: c,
-    valorFuncao: fc,
-    iteracoes: iteracao,
-    convergiu: convergiu,
-    erro: erro,
-    motivoParada: motivoParada,
-    passos: passos
+  // Se atingiu o máximo de iterações
+  return {
+    resultado: {
+      raiz: c,
+      valorFuncao: fc,
+      iteracoes: maxIteracao,
+      convergiu: false,
+      erro: erro,
+      motivoParada: 'Número máximo de iterações atingido', // Novo motivo de parada
+      passos: passos
+    }
   };
-
-  return { resultado };
 };
 
 module.exports = { metodoBisseccao };
