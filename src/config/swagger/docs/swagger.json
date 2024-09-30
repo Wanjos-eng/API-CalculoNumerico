@@ -192,7 +192,7 @@
       "post": {
         "tags": ["Métodos Numéricos"],
         "summary": "Executa o método de Newton-Raphson",
-        "description": "Calcula a raiz de uma função utilizando o método de Newton-Raphson.",
+        "description": "Calcula a raiz de uma função utilizando o método de Newton-Raphson. A derivada da função é calculada automaticamente.",
         "requestBody": {
           "required": true,
           "content": {
@@ -201,12 +201,11 @@
                 "type": "object",
                 "properties": {
                   "funcao": { "type": "string", "example": "x^2 - 4" },
-                  "derivada": { "type": "string", "example": "2*x" },
                   "chuteInicial": { "type": "number", "example": 1 },
                   "tolerancia": { "type": "number", "example": 0.01 },
                   "maxIteracao": { "type": "integer", "example": 100 }
                 },
-                "required": ["funcao", "derivada", "chuteInicial", "tolerancia", "maxIteracao"]
+                "required": ["funcao", "chuteInicial", "tolerancia", "maxIteracao"]
               }
             }
           }
@@ -219,12 +218,32 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "raiz": { "type": "number" },
-                    "valorFuncao": { "type": "number" },
-                    "iteracoes": { "type": "integer" },
-                    "convergiu": { "type": "boolean" },
-                    "erro": { "type": "number" },
-                    "motivoParada": { "type": "string" }
+                    "resultado": {
+                      "type": "object",
+                      "properties": {
+                        "raiz": { "type": "number" },
+                        "valorFuncao": { "type": "number" },
+                        "iteracoes": { "type": "integer" },
+                        "convergiu": { "type": "boolean" },
+                        "erro": { "type": "number" },
+                        "motivoParada": { "type": "string" },
+                        "derivada": { "type": "string" },
+                        "passos": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "iteracao": { "type": "integer" },
+                              "xAtual": { "type": "number" },
+                              "valorFuncao": { "type": "number" },
+                              "derivada": { "type": "number" },
+                              "xNovo": { "type": "number" },
+                              "erro": { "type": "number" }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -266,12 +285,31 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "raiz": { "type": "number" },
-                    "valorFuncao": { "type": "number" },
-                    "iteracoes": { "type": "integer" },
-                    "convergiu": { "type": "boolean" },
-                    "erro": { "type": "number" },
-                    "motivoParada": { "type": "string" }
+                    "resultado": {
+                      "type": "object",
+                      "properties": {
+                        "raiz": { "type": "number" },
+                        "valorFuncao": { "type": "number" },
+                        "iteracoes": { "type": "integer" },
+                        "convergiu": { "type": "boolean" },
+                        "erro": { "type": "number" },
+                        "motivoParada": { "type": "string" },
+                        "passos": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "iteracao": { "type": "integer" },
+                              "xAnterior": { "type": "number" },
+                              "xAtual": { "type": "number" },
+                              "xNovo": { "type": "number" },
+                              "valorFuncao": { "type": "number" },
+                              "erro": { "type": "number" }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }

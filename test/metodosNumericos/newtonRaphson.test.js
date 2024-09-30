@@ -4,12 +4,11 @@ const math = require('mathjs');
 describe('Teste do método Newton-Raphson', () => {
   test('Convergência para função simples f(x) = x^2 - 2', () => {
     const funcao = 'x^2 - 2';
-    const derivada = '2 * x';
     const chuteInicial = 1;
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     expect(resultadoMetodo).toHaveProperty('resultado');
     const resultado = resultadoMetodo.resultado;
@@ -20,12 +19,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Convergência imediata quando f(x0) = 0 (chute inicial é a raiz)', () => {
     const funcao = 'x^3';
-    const derivada = '3 * x^2';
     const chuteInicial = 0;
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     expect(resultadoMetodo).toHaveProperty('resultado');
     const resultado = resultadoMetodo.resultado;
@@ -38,12 +36,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Falha quando derivada é zero no chute inicial com f(x0) ≠ 0', () => {
     const funcao = 'sin(x)';
-    const derivada = 'cos(x)';
     const chuteInicial = math.pi / 2; // cos(π/2) = 0
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     expect(resultadoMetodo).toHaveProperty('error');
     expect(resultadoMetodo.error).toBe('Derivada próxima de zero. Método falhou.');
@@ -54,12 +51,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Convergência ou falha quando derivada se torna próxima de zero durante as iterações', () => {
     const funcao = 'x^3';
-    const derivada = '3 * x^2';
     const chuteInicial = 0.001;
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     // Verificar se o método convergiu ou se falhou devido à derivada próxima de zero
     if (resultadoMetodo.error) {
@@ -74,12 +70,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Máximo de iterações atingido sem convergência', () => {
     const funcao = 'exp(x) - 2'; // Função que cresce rapidamente
-    const derivada = 'exp(x)';
     const chuteInicial = -5; // Escolhido para aumentar as iterações
     const tolerancia = 1e-15; // Tolerância muito pequena
     const maxIteracao = 5; // Número baixo de iterações
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     expect(resultadoMetodo).toHaveProperty('resultado');
     const resultado = resultadoMetodo.resultado;
@@ -90,12 +85,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Convergência para função com múltiplas raízes f(x) = x^3 - x', () => {
     const funcao = 'x^3 - x';
-    const derivada = '3 * x^2 - 1';
     const chuteInicial = 0.5;
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     expect(resultadoMetodo).toHaveProperty('resultado');
     const resultado = resultadoMetodo.resultado;
@@ -112,12 +106,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Deve encontrar a raiz para f(x) = x * log(x) - 1 no intervalo [2, 3]', () => {
     const funcao = 'x * log(x,10) - 1';
-    const derivada = 'log(x,10) + 1'; // Derivada de f
     const chuteInicial = 2.5; // Chute inicial no intervalo [2, 3]
     const tolerancia = 0.001;
     const maxIteracao = 100;
 
-    const resultado = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultado = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
     //console.log(resultado); // Para depuração
 
     if (resultado.error) {
@@ -130,12 +123,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Deve encontrar a raiz para f(x) = x^3 - x - 1 no intervalo [1, 2]', () => {
     const funcao = 'x^3 - x - 1';
-    const derivada = '3 * x^2 - 1'; // Derivada de f
     const chuteInicial = 1.5; // Chute inicial no intervalo [1, 2]
     const tolerancia = 0.001;
     const maxIteracao = 100;
 
-    const resultado = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultado = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
     //console.log(resultado); // Para depuração
 
     if (resultado.error) {
@@ -148,12 +140,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Deve encontrar a raiz para f(x) = e^x + x no intervalo [-1, 0]', () => {
     const funcao = 'exp(x) + x';
-    const derivada = 'exp(x) + 1'; // Derivada de f
     const chuteInicial = -0.5; // Chute inicial no intervalo [-1, 0]
     const tolerancia = 0.001;
     const maxIteracao = 100;
 
-    const resultado = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultado = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
     //console.log(resultado); // Para depuração
 
     if (resultado.error) {
@@ -166,41 +157,37 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Falha em caso de chute inicial distante da raiz', () => {
     const funcao = 'x^3 - 2*x + 2'; // Raízes complexas
-    const derivada = '3*x^2 - 2';
     const chuteInicial = 1000; // Chute inicial distante
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
     
     // Verifica se um erro é retornado
     expect(resultadoMetodo).toHaveProperty('error');
-    expect(resultadoMetodo.error).toBe('Chute inicial muito longe da raiz.'); // Verifique se esta mensagem está correta no seu código
+    expect(resultadoMetodo.error).toBe('Chute inicial muito longe da raiz.');
   });
 
   test('Validação dos parâmetros', () => {
     const funcao = 'x^2 - 4';
-    const derivada = '2 * x';
     const chuteInicial = 2;
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
     // Parâmetros inválidos
-    expect(() => metodoNewtonRaphson(null, derivada, chuteInicial, tolerancia, maxIteracao)).toThrow();
-    expect(() => metodoNewtonRaphson(funcao, null, chuteInicial, tolerancia, maxIteracao)).toThrow();
-    expect(() => metodoNewtonRaphson(funcao, derivada, null, tolerancia, maxIteracao)).toThrow();
-    expect(() => metodoNewtonRaphson(funcao, derivada, chuteInicial, -1, maxIteracao)).toThrow(); // maxIteracao negativa
-    expect(() => metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, -1)).toThrow(); // tolerancia negativa
+    expect(() => metodoNewtonRaphson(null, chuteInicial, tolerancia, maxIteracao)).toThrow();
+    expect(() => metodoNewtonRaphson(funcao, null, tolerancia, maxIteracao)).toThrow();
+    expect(() => metodoNewtonRaphson(funcao, chuteInicial, -1, maxIteracao)).toThrow(); // tolerância negativa
+    expect(() => metodoNewtonRaphson(funcao, chuteInicial, tolerancia, -1)).toThrow(); // maxIteração negativa
   });
 
   test('Comportamento em funções oscilatórias', () => {
     const funcao = 'sin(x)'; // Função oscilatória
-    const derivada = 'cos(x)'; // Derivada de sin(x)
     const chuteInicial = 3; // Um chute inicial que não é a raiz
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     expect(resultadoMetodo).toHaveProperty('resultado');
     const resultado = resultadoMetodo.resultado;
@@ -213,12 +200,11 @@ describe('Teste do método Newton-Raphson', () => {
 
   test('Convergência para a função f(x) = x^4 - 2x^3 - 4x^2 + 4x + 4', () => {
     const funcao = 'x^4 - 2*x^3 - 4*x^2 + 4*x + 4';
-    const derivada = '4*x^3 - 6*x^2 - 8*x + 4'; // Derivada da função
     const chuteInicial = 1.3; // Chute inicial
     const tolerancia = 0.01; // Tolerância
     const maxIteracao = 100; // Número máximo de iterações
 
-    const resultadoMetodo = metodoNewtonRaphson(funcao, derivada, chuteInicial, tolerancia, maxIteracao);
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
 
     expect(resultadoMetodo).toHaveProperty('resultado');
     const resultado = resultadoMetodo.resultado;
@@ -229,4 +215,19 @@ describe('Teste do método Newton-Raphson', () => {
     expect(resultado.iteracoes).toBeLessThanOrEqual(maxIteracao); // O número de iterações não deve exceder o máximo
     expect(resultado.motivoParada).toBe('Tolerância atingida'); // O motivo da parada deve ser a tolerância atingida
   });
+  
+  test('Função cuja derivada não pode ser calculada deve lançar erro', () => {
+    const funcao = 'max(x, 0)'; // Função cuja derivada não pode ser calculada pelo mathjs
+    const chuteInicial = 1;
+    const tolerancia = 0.001;
+    const maxIteracao = 100;
+  
+    const resultadoMetodo = metodoNewtonRaphson(funcao, chuteInicial, tolerancia, maxIteracao);
+  
+    expect(resultadoMetodo).toHaveProperty('error');
+    expect(resultadoMetodo.error).toBe('Não foi possível calcular a derivada da função.');
+    expect(resultadoMetodo.iteracao).toBe(0);
+    expect(resultadoMetodo.xAtual).toBe(chuteInicial);
+    expect(resultadoMetodo.valorFuncao).toBeNull();
+  });    
 });

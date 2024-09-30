@@ -1,5 +1,3 @@
-// validacaoParametros.test.js
-
 const { validarParametros } = require('../../src/services/validacaoParametros');
 
 describe('Teste da função validarParametros', () => {
@@ -124,7 +122,6 @@ describe('Teste da função validarParametros', () => {
     test('Parâmetros válidos não devem lançar erro', () => {
       const params = {
         funcao: 'x^2 - 4',
-        derivada: '2*x',
         chuteInicial: 1.5,
         tolerancia: 0.001,
         maxIteracao: 100
@@ -133,22 +130,9 @@ describe('Teste da função validarParametros', () => {
       expect(() => validarParametros('newtonRaphson', params)).not.toThrow();
     });
 
-    test('Derivada vazia deve lançar erro', () => {
-      const params = {
-        funcao: 'x^2 - 4',
-        derivada: '',
-        chuteInicial: 1.5,
-        tolerancia: 0.001,
-        maxIteracao: 100
-      };
-
-      expect(() => validarParametros('newtonRaphson', params)).toThrow('A derivada deve ser uma string não vazia.');
-    });
-
     test('Chute inicial inválido deve lançar erro', () => {
       const params = {
         funcao: 'x^2 - 4',
-        derivada: '2*x',
         chuteInicial: 'abc',
         tolerancia: 0.001,
         maxIteracao: 100
@@ -160,7 +144,6 @@ describe('Teste da função validarParametros', () => {
     test('Tolerância inválida deve lançar erro', () => {
       const params = {
         funcao: 'x^2 - 4',
-        derivada: '2*x',
         chuteInicial: 1.5,
         tolerancia: -0.001,
         maxIteracao: 100
@@ -172,7 +155,6 @@ describe('Teste da função validarParametros', () => {
     test('MaxIteracao inválido deve lançar erro', () => {
       const params = {
         funcao: 'x^2 - 4',
-        derivada: '2*x',
         chuteInicial: 1.5,
         tolerancia: 0.001,
         maxIteracao: -1
@@ -180,18 +162,17 @@ describe('Teste da função validarParametros', () => {
 
       expect(() => validarParametros('newtonRaphson', params)).toThrow('O número máximo de iterações deve ser um inteiro positivo.');
     });
-      
+
     test('Função vazia deve lançar erro', () => {
       const params = {
         funcao: '', // Valor inválido
-        derivada: '2*x',
         chuteInicial: 1.5,
         tolerancia: 0.001,
         maxIteracao: 100
       };
   
       expect(() => validarParametros('newtonRaphson', params)).toThrow('A função deve ser uma string não vazia.');
-      });
+    });
   });
 
   // Testes para o método secante

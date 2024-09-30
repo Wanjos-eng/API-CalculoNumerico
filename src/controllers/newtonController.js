@@ -12,7 +12,7 @@ const newtonRaphson = async (req, res) => {
   }
 
   try {
-    const resultado = metodoNewtonRaphson(params.funcao, params.derivada, params.chuteInicial, params.tolerancia, params.maxIteracao);
+    const resultado = metodoNewtonRaphson(params.funcao, params.chuteInicial, params.tolerancia, params.maxIteracao);
     await salvarContexto(req.cookies.userId, { ...params, resultado });
     return res.status(200).json({ resultado });
   } catch (error) {
@@ -23,3 +23,4 @@ const newtonRaphson = async (req, res) => {
 module.exports = {
   newtonRaphson
 };
+

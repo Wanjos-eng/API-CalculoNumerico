@@ -33,12 +33,9 @@ const validarParametros = (metodo, params) => {
       break;
 
     case 'newtonRaphson':
-      const { funcao: fNewton, derivada, chuteInicial, tolerancia: tolNewton, maxIteracao: maxIterNewton } = params;
+      const { funcao: fNewton, chuteInicial, tolerancia: tolNewton, maxIteracao: maxIterNewton } = params;
       if (typeof fNewton !== 'string' || fNewton.trim() === '') {
         throw new Error('A função deve ser uma string não vazia.');
-      }
-      if (typeof derivada !== 'string' || derivada.trim() === '') {
-        throw new Error('A derivada deve ser uma string não vazia.');
       }
       if (typeof chuteInicial !== 'number') {
         throw new Error('O chute inicial deve ser um número.');

@@ -16,7 +16,6 @@ describe('NewtonRaphson Controller', () => {
     const req = {
       body: {
         funcao: 'x^2 - 4',
-        derivada: '2*x',
         chuteInicial: 3,
         tolerancia: 0.001,
         maxIteracao: 100,
@@ -32,12 +31,15 @@ describe('NewtonRaphson Controller', () => {
     };
 
     const metodoResultado = {
-      raiz: 2,
-      iteracoes: 5,
-      convergiu: true,
-      erro: 0.0005,
-      motivoParada: 'Tolerância atingida',
-      passos: [],
+      resultado: {
+        raiz: 2,
+        iteracoes: 5,
+        convergiu: true,
+        erro: 0.0005,
+        motivoParada: 'Tolerância atingida',
+        derivada: '2 * x',
+        passos: [],
+      }
     };
 
     metodoNewtonRaphson.mockReturnValue(metodoResultado);
@@ -47,7 +49,6 @@ describe('NewtonRaphson Controller', () => {
     expect(validarParametros).toHaveBeenCalledWith('newtonRaphson', req.body);
     expect(metodoNewtonRaphson).toHaveBeenCalledWith(
       req.body.funcao,
-      req.body.derivada,
       req.body.chuteInicial,
       req.body.tolerancia,
       req.body.maxIteracao
@@ -89,7 +90,6 @@ describe('NewtonRaphson Controller', () => {
     const req = {
       body: {
         funcao: 'x^2 - 4',
-        derivada: '2*x',
         chuteInicial: 3,
         tolerancia: 0.001,
         maxIteracao: 100,
@@ -115,7 +115,6 @@ describe('NewtonRaphson Controller', () => {
     expect(validarParametros).toHaveBeenCalledWith('newtonRaphson', req.body);
     expect(metodoNewtonRaphson).toHaveBeenCalledWith(
       req.body.funcao,
-      req.body.derivada,
       req.body.chuteInicial,
       req.body.tolerancia,
       req.body.maxIteracao

@@ -1,11 +1,25 @@
 const math = require('mathjs');
 const { validarParametros } = require('../services/validacaoParametros');
 
-const metodoNewtonRaphson = (funcao, derivada, chuteInicial, tolerancia, maxIteracao) => {
-  validarParametros('newtonRaphson', { funcao, derivada, chuteInicial, tolerancia, maxIteracao });
+const metodoNewtonRaphson = (funcao, chuteInicial, tolerancia, maxIteracao) => {
+  validarParametros('newtonRaphson', { funcao, chuteInicial, tolerancia, maxIteracao });
 
   const f = math.compile(funcao);
-  const df = math.compile(derivada);
+
+  // Calcular a derivada simbolicamente
+  let derivadaSimbolica;
+  try {
+    derivadaSimbolica = math.derivative(funcao, 'x');
+  } catch (error) {
+    return {
+      error: 'Não foi possível calcular a derivada da função.',
+      iteracao: 0,
+      xAtual: chuteInicial,
+      valorFuncao: null
+    };
+  }
+
+  const df = derivadaSimbolica.compile();
 
   let x = chuteInicial;
   let fx = f.evaluate({ x: x });
@@ -65,6 +79,7 @@ const metodoNewtonRaphson = (funcao, derivada, chuteInicial, tolerancia, maxIter
     convergiu: convergiu,
     erro: erro,
     motivoParada: motivoParada,
+    derivada: derivadaSimbolica.toString(),
     passos: passos
   };
 
