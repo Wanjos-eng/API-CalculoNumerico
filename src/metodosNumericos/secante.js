@@ -5,11 +5,13 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
     // Validação inicial dos parâmetros fornecidos
     validarParametros('secante', { funcao, x0, x1, tolerancia, maxIteracao });
 
-    // Inicializa variáveis para iterações
+    // Inicializa variáveis para iterações e registro de passos
     let iteracao = 0;
     let erro = tolerancia + 1;
     let xPrev = x0;
     let xCurr = x1;
+    const passos = [];  // Armazena os passos de cada iteração
+    let raiz; 
 
     // Iteração do método da secante
     while (erro > tolerancia && iteracao < maxIteracao) {
@@ -19,36 +21,66 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
 
         // Verifica se a função retorna um valor inválido (possível descontinuidade)
         if (!isFinite(fXCurr)) {
-            throw new Error('A função parece ter uma descontinuidade.');
+            return {
+                raiz: null, // Adiciona raiz como null em caso de descontinuidade
+                valorFuncao: fXCurr,
+                iteracoes: iteracao,
+                convergiu: false,
+                erro: erro,
+                motivoParada: 'Descontinuidade detectada',
+                passos
+            };
         }
 
         // Verifica divisão por zero com uma tolerância numérica pequena
         if (Math.abs(fXCurr - fXPrev) < 1e-12) {
-          // Se os valores estão muito próximos de zero, podemos considerar que é uma raiz múltipla
-          if (Math.abs(fXCurr) < 1e-12 && Math.abs(fXPrev) < 1e-12) {
-              throw new Error('Raiz múltipla detectada. Não é possível continuar o cálculo.');
-          } else {
-              throw new Error('Divisão por zero detectada. Não é possível continuar o cálculo.');
-          }
-      }
-               
+            let motivoParada = 'Divisão por zero detectada';
+            if (Math.abs(fXCurr) < 1e-12 && Math.abs(fXPrev) < 1e-12) {
+                motivoParada = 'Raiz múltipla detectada';
+            }
+            return {
+                raiz: null, // Adiciona raiz como null em caso de divisão por zero
+                valorFuncao: fXCurr,
+                iteracoes: iteracao,
+                convergiu: false,
+                erro: erro,
+                motivoParada,
+                passos
+            };
+        }
+
         // Fórmula do método da secante
         const xNext = xCurr - (fXCurr * (xCurr - xPrev)) / (fXCurr - fXPrev);
 
-        // Atualiza erro e variáveis
+        // Atualiza o erro e variáveis
         erro = Math.abs(xNext - xCurr);
+
+        // Armazena os passos atuais
+        passos.push({ iteracao, xPrev, xCurr, xNext, fXPrev, fXCurr, erro });
+
         xPrev = xCurr;
         xCurr = xNext;
         iteracao++;
     }
 
     // Verifica se o método convergiu
-    if (erro > tolerancia) {
-        throw new Error('O método da secante não convergiu dentro do número máximo de iterações.');
-    }
+    const convergiu = erro <= tolerancia;
+    let motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido'; // Atualiza o motivo aqui
 
-    // Retorna a raiz aproximada e o número de iterações
-    return { raiz: xCurr, iteracoes: iteracao };
+
+    // A raiz encontrada é xCurr
+    raiz = convergiu ? xCurr : null; // Armazena a raiz encontrada ou null se não convergiu
+
+    // Retorna os resultados desejados
+    return {
+        raiz, // Adiciona a raiz ao objeto de retorno
+        valorFuncao: math.evaluate(funcao, { x: xCurr }),
+        iteracoes: iteracao,
+        convergiu,
+        erro,
+        motivoParada,
+        passos
+    };
 };
 
 module.exports = { metodoSecante };

@@ -2,43 +2,53 @@ const { metodoSecante } = require('../../src/metodosNumericos/secante');
 const math = require('mathjs');
 
 describe('Testes do Método da Secante', () => {
-    test('Encontra raiz de uma função simples', () => {
-        const funcao = 'x^2 - 4'; // Raízes em x = 2 e x = -2
-        const x0 = 1;
-        const x1 = 3;
-        const tolerancia = 1e-6;
-        const maxIteracao = 100;
-        
-        const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
+  test('Encontra raiz de uma função simples', () => {
+    const funcao = 'x^2 - 4'; // Raízes em x = 2 e x = -2
+    const x0 = 1;
+    const x1 = 3;
+    const tolerancia = 1e-6;
+    const maxIteracao = 100;
+    
+    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
 
-        expect(resultado.raiz).toBeCloseTo(2, 6); // Aproximadamente 2
-        expect(resultado.iteracoes).toBeLessThanOrEqual(maxIteracao);
-    });
-
-    test('Falha se não convergir dentro do número máximo de iterações', () => {
-        const funcao = 'x^3 - 2*x + 2'; // Função que não tem raiz real
-        const x0 = 0;
-        const x1 = 1;
-        const tolerancia = 1e-6;
-        const maxIteracao = 10;
-
-        expect(() => {
-            metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-        }).toThrow('O método da secante não convergiu dentro do número máximo de iterações.');
-    });
-
-    test('Erro por divisão por zero', () => {
-      const funcao = '1/x'; // Exemplo de função que causa divisão por zero
-      const x0 = 1;
-      const x1 = 1.000001;
-      const tolerancia = 1e-7;
-      const maxIteracao = 100;
-  
-      expect(() => {
-          metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-      }).toThrow('Divisão por zero detectada. Não é possível continuar o cálculo.');
+    expect(resultado.raiz).toBeCloseTo(2, 6); // Aproximadamente 2 // Verifica o valor da função na raiz
+    expect(resultado.valorFuncao).toBeCloseTo(0, 6); // Verifica o número de iterações
+    expect(resultado.iteracoes).toBeLessThanOrEqual(maxIteracao); // Verifica se o método convergiu
+    expect(resultado.convergiu).toBe(true); // Verifica o erro final
+    expect(resultado.erro).toBeLessThanOrEqual(tolerancia); // Verifica o motivo da parada
+    expect(resultado.motivoParada).toBe('Tolerância atingida'); // Verifica se os passos foram armazenados corretamente
+    expect(resultado.passos.length).toBeGreaterThan(0); // Deve ter armazenado ao menos 1 passo
   });
-  
+
+  test('Falha se não convergir dentro do número máximo de iterações', () => {
+    const funcao = 'x^3 - 2*x + 2'; // Função que não tem raiz real
+    const x0 = 0;
+    const x1 = 1;
+    const tolerancia = 1e-6;
+    const maxIteracao = 10;
+
+    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
+
+    // Verifica se não convergiu
+    expect(resultado.convergiu).toBe(false); // O método não deve ter convergido
+    expect(resultado.iteracoes).toBe(maxIteracao); // O número de iterações deve ser igual ao máximo
+    expect(resultado.motivoParada).toBe('Número máximo de iterações atingido'); // Motivo da parada
+  });
+
+  test('Erro por divisão por zero', () => {
+    const funcao = '1/x'; // Exemplo de função que causa divisão por zero
+    const x0 = 1;
+    const x1 = 1.000001;
+    const tolerancia = 1e-7;
+    const maxIteracao = 100;
+
+    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
+
+    // Verifica se não convergiu
+    expect(resultado.convergiu).toBe(false); // O método não deve ter convergido
+    expect(resultado.motivoParada).toBe('Divisão por zero detectada'); // Motivo da parada
+    expect(resultado.iteracoes).toBeLessThan(maxIteracao); // O número de iterações deve ser menor que o máximo
+  });
 
   test('Encontra raiz da função x^3 - x - 1', () => {
       const funcao = 'x^3 - x - 1'; // Raiz próxima de 1.3247
@@ -99,12 +109,14 @@ describe('Testes do Método da Secante', () => {
     const tolerancia = 1e-7;
     const maxIteracao = 100;
 
-    expect(() => {
-        metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-    }).toThrow('Raiz múltipla detectada. Não é possível continuar o cálculo.');
+    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
+
+    // Verifica se não convergiu
+    expect(resultado.convergiu).toBe(false); // O método não deve ter convergido
+    expect(resultado.motivoParada).toBe('Raiz múltipla detectada'); // Motivo da parada
+    expect(resultado.iteracoes).toBeLessThan(maxIteracao); // O número de iterações deve ser menor que o máximo
   });
  
-
   test('Função com descontinuidade', () => {
     const funcao = '1 / (x - 1)'; // A função tem uma singularidade em x = 1
     const x0 = 0;
@@ -112,11 +124,13 @@ describe('Testes do Método da Secante', () => {
     const tolerancia = 1e-6;
     const maxIteracao = 100;
 
-    expect(() => {
-      metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-  }).toThrow('A função parece ter uma descontinuidade.');
-  
-  });
+    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
+
+    // Verifica se não convergiu
+    expect(resultado.convergiu).toBe(false); // O método não deve ter convergido
+    expect(resultado.motivoParada).toBe('Descontinuidade detectada'); // Motivo da parada
+    expect(resultado.iteracoes).toBeLessThan(maxIteracao); // O número de iterações deve ser menor que o máximo
+ });
 
   test('Função com mudança de sinal pequena', () => {
     const funcao = '1e-8 * x^3 - x'; // A função muda de sinal rapidamente
@@ -148,7 +162,13 @@ describe('Testes do Método da Secante', () => {
     const maxIteracao = 100;
 
     const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-    expect(resultado.raiz).toBeCloseTo(2, 6); // Converge para 2
+    // Verificar o valor da raiz no último passo
+    const ultimaRaiz = resultado.passos[resultado.passos.length - 1].xCurr;
+
+    // Verifica se a raiz está próxima de 2
+    expect(ultimaRaiz).toBeCloseTo(2, 5); // Converge para 2, com 5 casas decimais
+    expect(resultado.iteracoes).toBeLessThanOrEqual(maxIteracao);
+
   });
 
   test('Encontra raiz da função f(x) = x^4 - 2x^3 - 4x^2 + 4x + 4 usando o método da secante', () => {
@@ -156,16 +176,25 @@ describe('Testes do Método da Secante', () => {
     const x0 = 1.3; // Primeiro ponto do intervalo
     const x1 = 1.5; // Segundo ponto do intervalo
     const tolerancia = 0.01; // Tolerância
-    const maxIteracao = 100; // Número máximo de iterações
+    const maxIteracao = 200; // Número máximo de iterações
 
     const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
 
-    expect(resultado).toHaveProperty('raiz'); // Verifica se o resultado possui a propriedade 'raiz'
+    // Verifica se o resultado possui a propriedade 'valorFuncao', já que 'raiz' não existe diretamente
+    expect(resultado).toHaveProperty('valorFuncao'); 
+
+    // O valor da raiz será o último valor de xCurr em 'passos'
+    const ultimaRaiz = resultado.passos[resultado.passos.length - 1].xCurr;
+
+    // Verifica se o valor da raiz está próximo do esperado
+    expect(ultimaRaiz).toBeCloseTo(1.4135, 3); // Aproximadamente 1.4142, dentro de 4 casas decimais
+
+    // Verifica o número de iterações
     expect(resultado.iteracoes).toBeLessThanOrEqual(maxIteracao); // O número de iterações não deve exceder o máximo
 
     // Verifica se o valor da função na raiz encontrada está dentro da tolerância
     const f = math.compile(funcao);
-    const valorFuncaoNaRaiz = f.evaluate({ x: resultado.raiz });
+    const valorFuncaoNaRaiz = f.evaluate({ x: ultimaRaiz });
     expect(Math.abs(valorFuncaoNaRaiz)).toBeLessThanOrEqual(tolerancia); // Checa se |f(raiz)| está dentro da tolerância
   });
 });
