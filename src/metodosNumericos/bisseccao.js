@@ -5,18 +5,14 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Validações de entrada
   validarParametros('bisseccao', { funcao, intervalo, tolerancia, maxIteracao });
 
-  //console.log('Parâmetros recebidos:', { funcao, intervalo, tolerancia, maxIteracao });
-
+  // Compilando a função recebida
   const f = math.compile(funcao);
   let [a, b] = intervalo;
   let fa = f.evaluate({ x: a });
   let fb = f.evaluate({ x: b });
 
-  //console.log(`fa: ${fa}, fb: ${fb} (Intervalo: [${a}, ${b}])`);
-
   // Teste do intervalo
   if (fa === 0) {
-    //console.log(`Raiz encontrada em a: ${a}`);
     return {
       resultado: {
         raiz: a,
@@ -31,7 +27,6 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   if (fb === 0) {
-    //console.log(`Raiz encontrada em b: ${b}`);
     return {
       resultado: {
         raiz: b,
@@ -46,7 +41,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   if (fa * fb >= 0) {
-    throw new Error('A função deve mudar de sinal no intervalo dado.');
+    throw new Error('A função não muda de sinal no intervalo dado. As raízes não podem ser garantidas no intervalo [a, b].');
   }
 
   let passos = [];
@@ -57,11 +52,11 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     // Calculando o ponto médio
     c = (a + b) / 2;
     fc = f.evaluate({ x: c });
-    erro = Math.abs(fc);
+    erro = Math.abs(b - a) / 2;
 
-    // Verifica se há descontinuidade
+    // Verifica se há descontinuidade no ponto médio
     if (!isFinite(fc) || isNaN(fc)) {
-      throw new Error('A função parece ter uma descontinuidade no intervalo fornecido.');
+      throw new Error('A função parece ter uma descontinuidade no ponto médio do intervalo fornecido.');
     }
 
     // Determinando o próximo intervalo
@@ -89,7 +84,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     });
 
     // Critérios de parada
-    if (erro < tolerancia || Math.abs(b - a) < tolerancia) {
+    if (Math.abs(fc) < tolerancia || erro < tolerancia) {
       return {
         resultado: {
           raiz: c,
@@ -97,7 +92,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
           iteracoes: iteracao + 1,
           convergiu: true,
           erro: erro,
-          motivoParada: 'Tolerância atingida',
+          motivoParada: Math.abs(fc) === 0 ? 'Raiz encontrada com precisão total' : 'Tolerância atingida',
           passos: passos
         }
       };
@@ -114,7 +109,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
       iteracoes: maxIteracao,
       convergiu: false,
       erro: erro,
-      motivoParada: 'Número máximo de iterações atingido', // Novo motivo de parada
+      motivoParada: 'Número máximo de iterações atingido',
       passos: passos
     }
   };

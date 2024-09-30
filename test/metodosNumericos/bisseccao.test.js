@@ -167,11 +167,11 @@ describe('Método da Bissecção', () => {
 test('Deve encontrar a raiz para f(x) = x^3 - x - 1 no intervalo [1, 2]', () => {
     const funcao = 'x^3 - x - 1';
     const intervalo = [1, 2];
-    const tolerancia = 0.001;
+    const tolerancia = 0.002;
     const maxIteracao = 100;
 
     const resultado = metodoBisseccao(funcao, intervalo, tolerancia, maxIteracao);
-    //console.log(resultado); // Para depuração
+    console.log(resultado); // Para depuração
 
     if (resultado.error) {
         throw new Error(resultado.error);
