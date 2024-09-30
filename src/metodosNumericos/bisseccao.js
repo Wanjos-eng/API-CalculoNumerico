@@ -52,7 +52,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     // Calculando o ponto médio
     c = (a + b) / 2;
     fc = f.evaluate({ x: c });
-    erro = Math.abs(b - a) / 2;
+    erro = Math.abs(fc); // Corrigindo o cálculo do erro para ser o módulo de f(c)
 
     // Verifica se há descontinuidade no ponto médio
     if (!isFinite(fc) || isNaN(fc)) {
@@ -84,7 +84,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     });
 
     // Critérios de parada
-    if (Math.abs(fc) < tolerancia || erro < tolerancia) {
+    if (erro < tolerancia || Math.abs(b - a) / 2 < tolerancia) {
       return {
         resultado: {
           raiz: c,
@@ -92,7 +92,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
           iteracoes: iteracao + 1,
           convergiu: true,
           erro: erro,
-          motivoParada: Math.abs(fc) === 0 ? 'Raiz encontrada com precisão total' : 'Tolerância atingida',
+          motivoParada: erro === 0 ? 'Raiz encontrada com precisão total' : 'Tolerância atingida',
           passos: passos
         }
       };
