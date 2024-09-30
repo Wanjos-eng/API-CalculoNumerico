@@ -40,7 +40,11 @@ const initRedisClient = () => {
 const salvarContexto = async (chave, dados) => {
   const client = initRedisClient();
   try {
-    await client.set(chave, JSON.stringify(dados), { EX: 3600 });
+    const contextoCompleto = {
+      ...dados,
+      timestamp: new Date().toISOString(),
+    };
+    await client.set(chave, JSON.stringify(contextoCompleto), { EX: 3600 });
   } catch (error) {
     console.error('Erro ao salvar no cache:', error);
   }
