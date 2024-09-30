@@ -50,6 +50,16 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
     x = (a * fb - b * fa) / (fb - fa);
     fx = math.evaluate(funcao, { x });
 
+    // Armazena os passos
+    passos.push({
+      iteracao: iteracao + 1,
+      intervaloAtual: { a, b },
+      pontoFalsaPosicao: x,
+      valorFuncao: fx,
+      erro: Math.abs(fx),
+      descricao: 'Atualização do intervalo'
+    });
+
     // Verifica se a tolerância foi atingida
     if (Math.abs(fx) < tolerancia || Math.abs(b - a) < tolerancia) {
       return {
@@ -73,16 +83,6 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
       a = x;
       fa = fx;
     }
-
-    // Armazena os passos
-    passos.push({
-      iteracao: iteracao + 1,
-      intervaloAtual: { a, b },
-      pontoFalsaPosicao: x,
-      valorFuncao: fx,
-      erro: Math.abs(fx),
-      descricao: 'Atualização do intervalo'
-    });
 
     iteracao++;
   }
