@@ -9,12 +9,35 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let fa = math.evaluate(funcao, { x: a });
   let fb = math.evaluate(funcao, { x: b });
 
-  //console.log(`fa: ${fa}, fb: ${fb}`); // Para verificar os valores de fa e fb
+  // Array para armazenar os passos
+  const passos = [];
 
-  // Verifica se há mudança de sinal no intervalo
-  if (fa === 0 || fb === 0) {
-    // Se uma das funções é zero, a raiz foi encontrada
-    return { raiz: fa === 0 ? a : b, iteracoes: 0, erro: 0, convergiu: true, motivoParada: 'Raiz exata encontrada' };
+  // Verificação se a raiz está em um dos extremos
+  if (fa === 0) {
+    return {
+      resultado: {
+        raiz: a,
+        valorFuncao: fa,
+        iteracoes: 0,
+        convergiu: true,
+        erro: 0,
+        motivoParada: 'Raiz exata encontrada',
+        passos: []
+      }
+    };
+  }
+  if (fb === 0) {
+    return {
+      resultado: {
+        raiz: b,
+        valorFuncao: fb,
+        iteracoes: 0,
+        convergiu: true,
+        erro: 0,
+        motivoParada: 'Raiz exata encontrada',
+        passos: []
+      }
+    };
   } else if (fa * fb > 0) {  // Se ambos têm sinais iguais
     throw new Error('Não há raiz no intervalo fornecido, f(a) e f(b) devem ter sinais opostos, a função deve mudar de sinal no intervalo dado.');
   }
@@ -29,7 +52,17 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
 
     // Verifica se a tolerância foi atingida
     if (Math.abs(fx) < tolerancia || Math.abs(b - a) < tolerancia) {
-      return { raiz: x, iteracoes: iteracao + 1, erro: Math.abs(fx), convergiu: true, motivoParada: 'Tolerância atingida' };
+      return {
+        resultado: {
+          raiz: x,
+          valorFuncao: fx,
+          iteracoes: iteracao + 1,
+          convergiu: true,
+          erro: Math.abs(fx),
+          motivoParada: 'Tolerância atingida',
+          passos
+        }
+      };
     }
 
     // Atualiza os extremos do intervalo
@@ -41,11 +74,31 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
       fa = fx;
     }
 
+    // Armazena os passos
+    passos.push({
+      iteracao: iteracao + 1,
+      intervaloAtual: { a, b },
+      pontoFalsaPosicao: x,
+      valorFuncao: fx,
+      erro: Math.abs(fx),
+      descricao: 'Atualização do intervalo'
+    });
+
     iteracao++;
   }
 
   // Caso não convergir dentro do número máximo de iterações
-  throw new Error('Número máximo de iterações atingido sem convergência.'); 
+  return {
+    resultado: {
+      raiz: null, // ou x, se quiser retornar o último valor de x calculado
+      valorFuncao: fx,
+      iteracoes: iteracao,
+      convergiu: false,
+      erro: Math.abs(fx),
+      motivoParada: 'Número máximo de iterações atingido sem convergência.',
+      passos
+    }
+  };
 };
 
 module.exports = { metodoFalsaPosicao };
