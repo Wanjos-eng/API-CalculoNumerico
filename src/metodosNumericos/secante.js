@@ -7,7 +7,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
 
     // Inicializa variáveis para iterações e registro de passos
     let iteracao = 0;
-    let erro = tolerancia + 1;
+    let erro = tolerancia+1;
     let xPrev = x0;
     let xCurr = x1;
     const passos = [];  // Armazena os passos de cada iteração
@@ -20,7 +20,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
         const fXCurr = math.evaluate(funcao, { x: xCurr });
 
         // Verifica se a função retorna um valor inválido (possível descontinuidade)
-        if (!isFinite(fXCurr)) {
+        if (!isFinite(fXCurr) || !isFinite(fXPrev)) {
             return {
                 raiz: null, // Adiciona raiz como null em caso de descontinuidade
                 valorFuncao: fXCurr,
@@ -50,7 +50,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
         }
 
         // Fórmula do método da secante
-        const xNext = xCurr - (fXCurr * (xCurr - xPrev)) / (fXCurr - fXPrev);
+        const xNext = ((xPrev*fXCurr)-(xCurr*fXPrev))/(fXCurr-fXPrev);
 
         // Atualiza o erro e variáveis
         erro = Math.abs(xNext - xCurr);
@@ -58,8 +58,9 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
         // Armazena os passos atuais
         passos.push({ iteracao, xPrev, xCurr, xNext, fXPrev, fXCurr, erro });
 
-        xPrev = xCurr;
-        xCurr = xNext;
+        xCurr = xPrev;
+        xPrev = xNext;
+        
         iteracao++;
     }
 
@@ -74,7 +75,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
     // Retorna os resultados desejados
     return {
         raiz, // Adiciona a raiz ao objeto de retorno
-        valorFuncao: math.evaluate(funcao, { x: xCurr }),
+        valorFuncao: convergiu ? math.evaluate(funcao, { x: raiz }) : null,
         iteracoes: iteracao,
         convergiu,
         erro,

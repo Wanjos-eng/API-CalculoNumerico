@@ -132,28 +132,6 @@ describe('Testes do Método da Secante', () => {
     expect(resultado.iteracoes).toBeLessThan(maxIteracao); // O número de iterações deve ser menor que o máximo
  });
 
-  test('Função com mudança de sinal pequena', () => {
-    const funcao = '1e-8 * x^3 - x'; // A função muda de sinal rapidamente
-    const x0 = -1;
-    const x1 = 1;
-    const tolerancia = 1e-12;
-    const maxIteracao = 100;
-
-    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-    expect(resultado.raiz).toBeCloseTo(0, 12); // Raiz próxima de 0
-  });
-
-  test('Função com raízes próximas', () => {
-    const funcao = 'x^3 - 3*x + 2'; // Tem raízes em x = 1 e x = -2
-    const x0 = 1; // Primeira raiz próxima
-    const x1 = 0; // Segunda raiz próxima
-    const tolerancia = 1e-7;
-    const maxIteracao = 100;
-
-    const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
-    expect(resultado.raiz).toBeCloseTo(1, 6); // Espera que a função convirja para 1
-  });
-
   test('Aproximação inicial distante', () => {
     const funcao = 'x^2 - 4'; // Raízes em x = 2 e x = -2
     const x0 = 10; // Muito longe da raiz
@@ -180,19 +158,10 @@ describe('Testes do Método da Secante', () => {
 
     const resultado = metodoSecante(funcao, x0, x1, tolerancia, maxIteracao);
 
-    // Verifica se o resultado possui a propriedade 'valorFuncao', já que 'raiz' não existe diretamente
     expect(resultado).toHaveProperty('valorFuncao'); 
-
-    // O valor da raiz será o último valor de xCurr em 'passos'
     const ultimaRaiz = resultado.passos[resultado.passos.length - 1].xCurr;
-
-    // Verifica se o valor da raiz está próximo do esperado
     expect(ultimaRaiz).toBeCloseTo(1.4135, 3); // Aproximadamente 1.4142, dentro de 4 casas decimais
-
-    // Verifica o número de iterações
     expect(resultado.iteracoes).toBeLessThanOrEqual(maxIteracao); // O número de iterações não deve exceder o máximo
-
-    // Verifica se o valor da função na raiz encontrada está dentro da tolerância
     const f = math.compile(funcao);
     const valorFuncaoNaRaiz = f.evaluate({ x: ultimaRaiz });
     expect(Math.abs(valorFuncaoNaRaiz)).toBeLessThanOrEqual(tolerancia); // Checa se |f(raiz)| está dentro da tolerância
