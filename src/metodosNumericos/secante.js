@@ -11,7 +11,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
     let xPrev = x0;
     let xCurr = x1;
     const passos = [];  // Armazena os passos de cada iteração
-    let raiz = null; 
+    let raiz = xCurr; 
 
     // Iteração do método da secante
     while (erro > tolerancia && iteracao < maxIteracao) {
