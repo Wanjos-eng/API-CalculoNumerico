@@ -38,9 +38,9 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
         passos: []
       }
     };
-  } else if (fa * fb > 0) {  // Se ambos têm sinais iguais
+  } /*else if (fa * fb > 0) {  // Se ambos têm sinais iguais
     throw new Error('Não há raiz no intervalo fornecido, f(a) e f(b) devem ter sinais opostos, a função deve mudar de sinal no intervalo dado.');
-  }
+  }*/
 
   let iteracao = 0;
   let x, fx;
