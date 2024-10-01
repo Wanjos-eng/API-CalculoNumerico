@@ -10,11 +10,12 @@ const app = express();
 
 // Middlewares globais
 
-// Middleware CORS personalizado para permitir comunicação com cookies
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*'); // Permite qualquer origem
+// Configurar CORS com permissões específicas
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://numericsolve.vercel.app/'); // Substitua pela origem do seu front-end
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.header('Access-Control-Allow-Credentials', 'true'); // Permite o envio de cookies
+  res.header('Access-Control-Allow-Credentials', 'true'); // Permitir envio de cookies
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
 });
 
