@@ -47,20 +47,56 @@ const validarTransicaoMetodo = (contextoAnterior, metodoEscolhido, params) => {
   }
 
   switch (metodoEscolhido) {
-    case 'bisseccao':
+    case 'bisseccao': {
+      // Transição para Bissecção: Utilizar o ponto médio do último passo como novo intervalo
+      const pontoMedio = ultimoPasso.pontoMedio;
+      let a, b;
+
+      if (ultimoPasso.intervaloAtual) {
+        a = ultimoPasso.intervaloAtual.a;
+        b = ultimoPasso.intervaloAtual.b;
+      } else if (Array.isArray(contextoAnterior.intervalo)) {
+        [a, b] = contextoAnterior.intervalo;
+      } else if (typeof contextoAnterior.intervalo === 'object') {
+        a = contextoAnterior.intervalo.a;
+        b = contextoAnterior.intervalo.b;
+      } else {
+        throw new Error('Formato do intervalo inválido no contexto anterior.');
+      }
+
+      if (typeof pontoMedio !== 'number') {
+        throw new Error('Ponto médio inválido no último passo.');
+      }
+
+      // Determinar em qual subintervalo a raiz está, baseado no sinal da função
+      if (ultimoPasso.valorFuncao < 0) {
+        // A raiz está entre o ponto médio e b
+        return { intervalo: [pontoMedio, b] };
+      } else {
+        // A raiz está entre a e o ponto médio
+        return { intervalo: [a, pontoMedio] };
+      }
+    }
+
     case 'falsaPosicao': {
-      // Transição para Bissecção ou Falsa Posição: Utilizar o intervalo do último passo
-      const intervalo = contextoAnterior.intervalo || extrairIntervaloDaDescricao(ultimoPasso.descricao);
+      // Transição para Falsa Posicao: Utilizar o intervalo do último passo
+      let intervalo;
+
+      if (contextoAnterior.intervalo) {
+        if (Array.isArray(contextoAnterior.intervalo)) {
+          intervalo = contextoAnterior.intervalo;
+        } else if (typeof contextoAnterior.intervalo === 'object') {
+          intervalo = [contextoAnterior.intervalo.a, contextoAnterior.intervalo.b];
+        }
+      } else {
+        intervalo = extrairIntervaloDaDescricao(ultimoPasso.descricao);
+      }
+
       if (intervalo && intervalo.length === 2) {
         return { intervalo };
-      } else if (
-        ultimoPasso.intervaloAtual &&
-        typeof ultimoPasso.intervaloAtual.a === 'number' &&
-        typeof ultimoPasso.intervaloAtual.b === 'number'
-      ) {
-        return { intervalo: [ultimoPasso.intervaloAtual.a, ultimoPasso.intervaloAtual.b] };
+      } else {
+        throw new Error('Não foi possível extrair o intervalo atual do método anterior.');
       }
-      throw new Error('Não foi possível extrair o intervalo atual do método anterior.');
     }
 
     case 'newtonRaphson': {
@@ -71,28 +107,58 @@ const validarTransicaoMetodo = (contextoAnterior, metodoEscolhido, params) => {
           throw new Error('Para trocar para o método de Newton-Raphson, você deve fornecer um chute inicial numérico.');
         }
         return { chuteInicial: chuteInicialNum };
-      } else if (typeof ultimoPasso.pontoMedio === 'number') {
-        return { chuteInicial: ultimoPasso.pontoMedio };
-      } else if (typeof ultimoPasso.xAtual === 'number') {
-        return { chuteInicial: ultimoPasso.xAtual };
+      } else {
+        // Pega o ponto médio do último passo como chute inicial, se disponível
+        const chuteInicialNum = ultimoPasso.pontoMedio || ultimoPasso.xAtual || ultimoPasso.xNovo;
+        if (typeof chuteInicialNum === 'number') {
+          return { chuteInicial: chuteInicialNum };
+        } else {
+          throw new Error('Não foi possível determinar um chute inicial para o método de Newton-Raphson.');
+        }
       }
-      throw new Error('Não foi possível determinar um chute inicial para o método de Newton-Raphson.');
     }
 
     case 'secante': {
-      // Transição para Secante: Utilizar x0 e x1 adequados
-      if (contextoAnterior.metodo === 'bisseccao' || contextoAnterior.metodo === 'falsaPosicao') {
-        const { intervaloAtual, pontoMedio } = ultimoPasso;
-
-        if (intervaloAtual && typeof pontoMedio === 'number') {
-          const { a, b } = intervaloAtual;
-          return { x0: pontoMedio, x1: a === pontoMedio ? b : a };
+      // Função auxiliar para obter o intervalo anterior
+      const obterIntervaloAnterior = () => {
+        if (contextoAnterior.intervalo) {
+          if (Array.isArray(contextoAnterior.intervalo)) {
+            return contextoAnterior.intervalo;
+          } else if (typeof contextoAnterior.intervalo === 'object') {
+            return [contextoAnterior.intervalo.a, contextoAnterior.intervalo.b];
+          }
+        } else if (ultimoPasso.intervaloAtual) {
+          return [ultimoPasso.intervaloAtual.a, ultimoPasso.intervaloAtual.b];
         }
-        throw new Error('Não foi possível determinar x0 e x1 para o método da Secante.');
-      } else if (typeof ultimoPasso.xAtual === 'number' && typeof ultimoPasso.xNovo === 'number') {
-        return { x0: ultimoPasso.xAtual, x1: ultimoPasso.xNovo };
+        return null;
+      };
+
+      // Transição a partir de Bissecção ou Falsa Posicao
+      if (['bisseccao', 'falsaPosicao'].includes(contextoAnterior.metodo)) {
+        const intervalo = obterIntervaloAnterior();
+
+        if (intervalo && intervalo.length === 2) {
+          const [x0, x1] = intervalo;
+          return { x0, x1 };
+        }
+
+        throw new Error('Não foi possível determinar x0 e x1 a partir do intervalo do método anterior para o Método da Secante.');
       }
-      throw new Error('Não foi possível determinar x0 e x1 para continuar o método da Secante.');
+
+      // Transição a partir de Newton-Raphson ou continuação com Secante
+      if (['newtonRaphson', 'secante'].includes(contextoAnterior.metodo)) {
+        const x0 = ultimoPasso.xAtual || ultimoPasso.pontoMedio || contextoAnterior.resultado?.resultado?.raiz;
+        const x1 = ultimoPasso.xNovo || ultimoPasso.xAtual;
+
+        if (typeof x0 === 'number' && typeof x1 === 'number' && x0 !== x1) {
+          return { x0, x1 };
+        }
+
+        throw new Error('Não foi possível determinar x0 e x1 para continuar com o Método da Secante.');
+      }
+
+      // Caso nenhum método anterior compatível seja encontrado
+      throw new Error('Para trocar para o Método da Secante, você deve fornecer x0 e x1.');
     }
 
     default:
@@ -151,6 +217,12 @@ const continuarSolucao = async (req, res) => {
 
     console.log('Contexto atualizado:', contextoAtualizado);
 
+    // Adicionar os cabeçalhos CORS antes de enviar a resposta
+    res.setHeader('Access-Control-Allow-Origin', 'https://api-calculonumerico.onrender.com'); // Substitua pela origem do seu frontend
+    res.setHeader('Access-Control-Allow-Credentials', 'true'); // Permite o envio de cookies
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
     try {
       // Validar os parâmetros para o método escolhido
       validarParametros(metodoEscolhido, contextoAtualizado);
@@ -165,9 +237,15 @@ const continuarSolucao = async (req, res) => {
       if (metodoEscolhido === 'newtonRaphson') {
         parametroMetodo = contextoAtualizado.chuteInicial;
       } else if (metodoEscolhido === 'secante') {
+        // Verificar se x0 e x1 estão definidos
+        if (typeof contextoAtualizado.x0 !== 'number' || typeof contextoAtualizado.x1 !== 'number') {
+          throw new Error('Parâmetros x0 e x1 devem ser números para o método da Secante.');
+        }
         parametroMetodo = [contextoAtualizado.x0, contextoAtualizado.x1];
-      } else {
+      } else if (metodoEscolhido === 'bisseccao' || metodoEscolhido === 'falsaPosicao') {
         parametroMetodo = contextoAtualizado.intervalo;
+      } else {
+        throw new Error('Método escolhido não implementado.');
       }
 
       console.log('Parâmetros para o método:', funcao, parametroMetodo, tolerancia, novasIteracoes);
