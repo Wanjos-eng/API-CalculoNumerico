@@ -216,11 +216,11 @@ const continuarSolucao = async (req, res) => {
       console.log('Contexto atualizado:', contextoAtualizado);
   
       // Setando o cookie userId
-      res.cookie('userId', userId, {
+      /*res.cookie('userId', userId, {
         httpOnly: true,
         secure: false,   // Em produção, certifique-se de mudar para true (usando SSL)
         sameSite: 'lax',
-      });
+      });*/
   
       try {
         validarParametros(metodoEscolhido, contextoAtualizado);
