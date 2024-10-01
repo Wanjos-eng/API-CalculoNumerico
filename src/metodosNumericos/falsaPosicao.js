@@ -90,7 +90,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Caso não convergir dentro do número máximo de iterações
   return {
     resultado: {
-      raiz: null, // ou x, se quiser retornar o último valor de x calculado
+      raiz: x, // ou x, se quiser retornar o último valor de x calculado
       valorFuncao: fx,
       iteracoes: iteracao,
       convergiu: false,
