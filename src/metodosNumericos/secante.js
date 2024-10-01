@@ -7,11 +7,11 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
 
     // Inicializa variáveis para iterações e registro de passos
     let iteracao = 0;
-    let erro = tolerancia+1;
+    let erro = tolerancia + 1;
     let xPrev = x0;
     let xCurr = x1;
     const passos = [];  // Armazena os passos de cada iteração
-    let raiz; 
+    let raiz = null; 
 
     // Iteração do método da secante
     while (erro > tolerancia && iteracao < maxIteracao) {
@@ -22,7 +22,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
         // Verifica se a função retorna um valor inválido (possível descontinuidade)
         if (!isFinite(fXCurr) || !isFinite(fXPrev)) {
             return {
-                raiz: null, // Adiciona raiz como null em caso de descontinuidade
+                raiz: xCurr, // Retorna o último valor calculado
                 valorFuncao: fXCurr,
                 iteracoes: iteracao,
                 convergiu: false,
@@ -39,7 +39,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
                 motivoParada = 'Raiz múltipla detectada';
             }
             return {
-                raiz: null, // Adiciona raiz como null em caso de divisão por zero
+                raiz: xCurr, // Retorna o último valor calculado
                 valorFuncao: fXCurr,
                 iteracoes: iteracao,
                 convergiu: false,
@@ -50,7 +50,7 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
         }
 
         // Fórmula do método da secante
-        const xNext = ((xPrev*fXCurr)-(xCurr*fXPrev))/(fXCurr-fXPrev);
+        const xNext = ((xPrev * fXCurr) - (xCurr * fXPrev)) / (fXCurr - fXPrev);
 
         // Atualiza o erro e variáveis
         erro = Math.abs(xNext - xCurr);
@@ -58,24 +58,24 @@ const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
         // Armazena os passos atuais
         passos.push({ iteracao, xPrev, xCurr, xNext, fXPrev, fXCurr, erro });
 
-        xCurr = xPrev;
-        xPrev = xNext;
-        
+        // Atualiza as variáveis para a próxima iteração
+        xPrev = xCurr;
+        xCurr = xNext;
+
         iteracao++;
     }
 
     // Verifica se o método convergiu
     const convergiu = erro <= tolerancia;
-    let motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido'; // Atualiza o motivo aqui
+    let motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido';
 
-
-    // A raiz encontrada é xCurr
-    raiz = convergiu ? xCurr : null; // Armazena a raiz encontrada ou null se não convergiu
+    // A raiz encontrada é o valor atual de xCurr
+    raiz = xCurr;
 
     // Retorna os resultados desejados
     return {
-        raiz, // Adiciona a raiz ao objeto de retorno
-        valorFuncao: convergiu ? math.evaluate(funcao, { x: raiz }) : null,
+        raiz, // Sempre retorna o último valor calculado
+        valorFuncao: math.evaluate(funcao, { x: raiz }),
         iteracoes: iteracao,
         convergiu,
         erro,
