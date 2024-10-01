@@ -167,117 +167,104 @@ const validarTransicaoMetodo = (contextoAnterior, metodoEscolhido, params) => {
 };
 
 const continuarSolucao = async (req, res) => {
-  const userId = req.cookies.userId;
-  const { metodoEscolhido, novasIteracoes, chuteInicial, x0, x1 } = req.body;
-
-  console.log('Requisição recebida:', req.body);
-
-  // Validação básica dos parâmetros da requisição
-  if (!metodoEscolhido || !metodosNumericos[metodoEscolhido]) {
-    console.error('Erro: Método inválido ou não fornecido.');
-    return res.status(400).json({ error: 'Método inválido ou não fornecido.' });
-  }
-
-  if (!Number.isInteger(novasIteracoes) || novasIteracoes <= 0) {
-    console.error('Erro: O número de iterações deve ser um inteiro positivo.');
-    return res.status(400).json({ error: 'O número de iterações deve ser um inteiro positivo.' });
-  }
-
-  try {
-    const contextoAnterior = await recuperarContexto(userId);
-    if (!contextoAnterior) {
-      console.error('Erro: Nenhum contexto anterior encontrado.');
-      return res.status(400).json({ error: 'Nenhum contexto anterior encontrado.' });
+    const userId = req.cookies.userId || 'defaultUserId'; // Pega o userId do cookie, ou usa um valor padrão se não existir
+    const { metodoEscolhido, novasIteracoes, chuteInicial, x0, x1 } = req.body;
+  
+    console.log('Requisição recebida:', req.body);
+  
+    // Validação básica dos parâmetros da requisição
+    if (!metodoEscolhido || !metodosNumericos[metodoEscolhido]) {
+      console.error('Erro: Método inválido ou não fornecido.');
+      return res.status(400).json({ error: 'Método inválido ou não fornecido.' });
     }
-
-    console.log('Contexto anterior recuperado:', contextoAnterior);
-
-    // Obter o total de iterações
-    const iteracoesAnteriores = contextoAnterior.resultado?.resultado?.iteracoes || 0;
-    const iteracoesTotais = iteracoesAnteriores + novasIteracoes;
-
-    // Preparar os parâmetros adicionais
-    let parametrosAdicionais;
-    try {
-      parametrosAdicionais = validarTransicaoMetodo(contextoAnterior, metodoEscolhido, { chuteInicial, x0, x1 });
-      console.log('Parâmetros adicionais após validação:', parametrosAdicionais);
-    } catch (error) {
-      console.error('Erro ao validar transição de método:', error.message);
-      return res.status(400).json({ error: error.message });
+  
+    if (!Number.isInteger(novasIteracoes) || novasIteracoes <= 0) {
+      console.error('Erro: O número de iterações deve ser um inteiro positivo.');
+      return res.status(400).json({ error: 'O número de iterações deve ser um inteiro positivo.' });
     }
-
-    // Atualizar o contexto com os novos parâmetros
-    const contextoAtualizado = {
-      ...contextoAnterior,
-      maxIteracao: contextoAnterior.maxIteracao,
-      iteracoes: iteracoesTotais,
-      ...parametrosAdicionais,
-      metodo: metodoEscolhido,
-    };
-
-    console.log('Contexto atualizado:', contextoAtualizado);
-
-    // Adicionar os cabeçalhos CORS antes de enviar a resposta
-    res.setHeader('Access-Control-Allow-Origin', '*'); 
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
+  
     try {
-      // Validar os parâmetros para o método escolhido
-      validarParametros(metodoEscolhido, contextoAtualizado);
-      console.log('Parâmetros validados com sucesso para o método:', metodoEscolhido);
-
-      // Preparar os parâmetros para o método numérico
-      const metodo = metodosNumericos[metodoEscolhido];
-      const funcao = contextoAtualizado.funcao;
-      const tolerancia = contextoAtualizado.tolerancia;
-
-      let parametroMetodo;
-      if (metodoEscolhido === 'newtonRaphson') {
-        parametroMetodo = contextoAtualizado.chuteInicial;
-      } else if (metodoEscolhido === 'secante') {
-        if (typeof contextoAtualizado.x0 !== 'number' || typeof contextoAtualizado.x1 !== 'number') {
-          throw new Error('Parâmetros x0 e x1 devem ser números para o método da Secante.');
-        }
-        parametroMetodo = [contextoAtualizado.x0, contextoAtualizado.x1];
-      } else if (metodoEscolhido === 'bisseccao' || metodoEscolhido === 'falsaPosicao') {
-        parametroMetodo = contextoAtualizado.intervalo;
-      } else {
-        throw new Error('Método escolhido não implementado.');
+      const contextoAnterior = await recuperarContexto(userId);
+      if (!contextoAnterior) {
+        console.error('Erro: Nenhum contexto anterior encontrado.');
+        return res.status(400).json({ error: 'Nenhum contexto anterior encontrado.' });
       }
-
-      console.log('Parâmetros para o método:', funcao, parametroMetodo, tolerancia, novasIteracoes);
-
-      // Executar o método escolhido
-      const novoResultado = metodo(funcao, parametroMetodo, tolerancia, novasIteracoes);
-
-      console.log('Resultado do método:', novoResultado);
-
-      // Atualizar o contexto com o novo resultado
-      await salvarContexto(userId, { ...contextoAtualizado, resultado: { resultado: novoResultado } });
-
-      // Logar os cabeçalhos da resposta
-      console.log('Cabeçalhos da resposta:', res.getHeaders());
-
-      return res.status(200).json({
-        metodoAnterior: contextoAnterior.metodo,
-        resultadoAnterior: contextoAnterior.resultado,
-        metodoAtual: metodoEscolhido,
-        novoResultado,
-        iteracoesTotais,
+  
+      console.log('Contexto anterior recuperado:', contextoAnterior);
+  
+      // Atualizar o contexto com os novos parâmetros
+      const iteracoesAnteriores = contextoAnterior.resultado?.resultado?.iteracoes || 0;
+      const iteracoesTotais = iteracoesAnteriores + novasIteracoes;
+  
+      let parametrosAdicionais;
+      try {
+        parametrosAdicionais = validarTransicaoMetodo(contextoAnterior, metodoEscolhido, { chuteInicial, x0, x1 });
+        console.log('Parâmetros adicionais após validação:', parametrosAdicionais);
+      } catch (error) {
+        console.error('Erro ao validar transição de método:', error.message);
+        return res.status(400).json({ error: error.message });
+      }
+  
+      const contextoAtualizado = {
+        ...contextoAnterior,
+        maxIteracao: contextoAnterior.maxIteracao,
+        iteracoes: iteracoesTotais,
+        ...parametrosAdicionais,
+        metodo: metodoEscolhido,
+      };
+  
+      console.log('Contexto atualizado:', contextoAtualizado);
+  
+      // Setando o cookie userId
+      res.cookie('userId', userId, {
+        httpOnly: true,
+        secure: false,   // Em produção, certifique-se de mudar para true (usando SSL)
+        sameSite: 'lax',
       });
-
+  
+      try {
+        validarParametros(metodoEscolhido, contextoAtualizado);
+        console.log('Parâmetros validados com sucesso para o método:', metodoEscolhido);
+  
+        const metodo = metodosNumericos[metodoEscolhido];
+        const funcao = contextoAtualizado.funcao;
+        const tolerancia = contextoAtualizado.tolerancia;
+  
+        let parametroMetodo;
+        if (metodoEscolhido === 'newtonRaphson') {
+          parametroMetodo = contextoAtualizado.chuteInicial;
+        } else if (metodoEscolhido === 'secante') {
+          if (typeof contextoAtualizado.x0 !== 'number' || typeof contextoAtualizado.x1 !== 'number') {
+            throw new Error('Parâmetros x0 e x1 devem ser números para o método da Secante.');
+          }
+          parametroMetodo = [contextoAtualizado.x0, contextoAtualizado.x1];
+        } else if (metodoEscolhido === 'bisseccao' || metodoEscolhido === 'falsaPosicao') {
+          parametroMetodo = contextoAtualizado.intervalo;
+        } else {
+          throw new Error('Método escolhido não implementado.');
+        }
+  
+        const novoResultado = metodo(funcao, parametroMetodo, tolerancia, novasIteracoes);
+        await salvarContexto(userId, { ...contextoAtualizado, resultado: { resultado: novoResultado } });
+  
+        return res.status(200).json({
+          metodoAnterior: contextoAnterior.metodo,
+          resultadoAnterior: contextoAnterior.resultado,
+          metodoAtual: metodoEscolhido,
+          novoResultado,
+          iteracoesTotais,
+        });
+  
+      } catch (error) {
+        console.error(`Erro ao aplicar o método ${metodoEscolhido}:`, error.message);
+        return res.status(400).json({ error: `Erro ao aplicar o método ${metodoEscolhido}: ${error.message}` });
+      }
+  
     } catch (error) {
-      console.error(`Erro ao aplicar o método ${metodoEscolhido}:`, error.message);
-      return res.status(400).json({ error: `Erro ao aplicar o método ${metodoEscolhido}: ${error.message}` });
+      console.error('Erro inesperado:', error.message);
+      return res.status(500).json({ error: error.message });
     }
-
-  } catch (error) {
-    console.error('Erro inesperado:', error.message);
-    return res.status(500).json({ error: error.message });
-  }
-};
+  };  
 
 module.exports = {
   continuarSolucao,
