@@ -218,8 +218,8 @@ const continuarSolucao = async (req, res) => {
     console.log('Contexto atualizado:', contextoAtualizado);
 
     // Adicionar os cabeçalhos CORS antes de enviar a resposta
-    res.setHeader('Access-Control-Allow-Origin', 'https://api-calculonumerico.onrender.com'); // Substitua pela origem do seu frontend
-    res.setHeader('Access-Control-Allow-Credentials', 'true'); // Permite o envio de cookies
+    res.setHeader('Access-Control-Allow-Origin', '*'); 
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -237,7 +237,6 @@ const continuarSolucao = async (req, res) => {
       if (metodoEscolhido === 'newtonRaphson') {
         parametroMetodo = contextoAtualizado.chuteInicial;
       } else if (metodoEscolhido === 'secante') {
-        // Verificar se x0 e x1 estão definidos
         if (typeof contextoAtualizado.x0 !== 'number' || typeof contextoAtualizado.x1 !== 'number') {
           throw new Error('Parâmetros x0 e x1 devem ser números para o método da Secante.');
         }
@@ -257,6 +256,9 @@ const continuarSolucao = async (req, res) => {
 
       // Atualizar o contexto com o novo resultado
       await salvarContexto(userId, { ...contextoAtualizado, resultado: { resultado: novoResultado } });
+
+      // Logar os cabeçalhos da resposta
+      console.log('Cabeçalhos da resposta:', res.getHeaders());
 
       return res.status(200).json({
         metodoAnterior: contextoAnterior.metodo,
