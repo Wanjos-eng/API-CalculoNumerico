@@ -45,7 +45,7 @@ const validarTransicaoMetodo = (contextoAnterior, metodoEscolhido, params) => {
   if (!ultimoPasso) {
     throw new Error('Não foi possível obter os dados do último passo do método anterior.');
   }
-
+  
   switch (metodoEscolhido) {
     case 'bisseccao': {
       // Transição para Bissecção: Utilizar o ponto médio do último passo como novo intervalo

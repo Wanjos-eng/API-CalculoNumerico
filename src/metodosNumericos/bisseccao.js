@@ -40,9 +40,9 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     };
   }
 
-  if (fa * fb >= 0) {
+  /*if (fa * fb >= 0) {
     throw new Error('A função não muda de sinal no intervalo dado. As raízes não podem ser garantidas no intervalo [a, b].');
-  }
+  }*/
 
   let passos = [];
   let iteracao = 0;
