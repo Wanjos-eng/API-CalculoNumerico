@@ -20,7 +20,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
         iteracoes: 0,
         convergiu: true,
         erro: 0,
-        motivoParada: 'Raiz encontrada no extremo do intervalo',
+        motivoParada: 'Raiz encontrada no extremo inferior do intervalo',
         passos: []
       }
     };
@@ -34,29 +34,37 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
         iteracoes: 0,
         convergiu: true,
         erro: 0,
-        motivoParada: 'Raiz encontrada no extremo do intervalo',
+        motivoParada: 'Raiz encontrada no extremo superior do intervalo',
         passos: []
       }
     };
   }
 
-  /*if (fa * fb >= 0) {
-    throw new Error('A função não muda de sinal no intervalo dado. As raízes não podem ser garantidas no intervalo [a, b].');
-  }*/
-
   let passos = [];
   let iteracao = 0;
-  let c, fc, erro;
+  let c = a; // Inicializa c com a para evitar undefined
+  let fc = fa;
+  let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
+  let convergiu = false;
 
-  while (iteracao < maxIteracao) {
+  while (iteracao < maxIteracao && erro > tolerancia) {
     // Calculando o ponto médio
     c = (a + b) / 2;
     fc = f.evaluate({ x: c });
-    erro = Math.abs(fc); // Corrigindo o cálculo do erro para ser o módulo de f(c)
+    erro = Math.abs(b - a) / 2;
 
     // Verifica se há descontinuidade no ponto médio
     if (!isFinite(fc) || isNaN(fc)) {
-      throw new Error('A função parece ter uma descontinuidade no ponto médio do intervalo fornecido.');
+      return {
+        resultado: {
+          valorFuncao: fc,
+          iteracoes: iteracao + 1,
+          convergiu: false,
+          erro: null,
+          motivoParada: 'Descontinuidade detectada no ponto médio',
+          passos
+        }
+      };
     }
 
     // Determinando o próximo intervalo
@@ -64,11 +72,11 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     let descricao = '';
 
     if (fa * fc < 0) {
-      descricao = `A função muda de sinal entre [${a}, ${c}].`;
+      descricao = `A função muda de sinal entre [${a}, ${c}]. Novo intervalo: [${a}, ${c}]`;
       b = c;
       fb = fc;
     } else {
-      descricao = `A função muda de sinal entre [${c}, ${b}].`;
+      descricao = `A função muda de sinal entre [${c}, ${b}]. Novo intervalo: [${c}, ${b}]`;
       a = c;
       fa = fc;
     }
@@ -83,36 +91,32 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
       descricao: descricao
     });
 
-    // Critérios de parada
-    if (erro < tolerancia || Math.abs(b - a) / 2 < tolerancia) {
-      return {
-        resultado: {
-          raiz: c,
-          valorFuncao: fc,
-          iteracoes: iteracao + 1,
-          convergiu: true,
-          erro: erro,
-          motivoParada: erro === 0 ? 'Raiz encontrada com precisão total' : 'Tolerância atingida',
-          passos: passos
-        }
-      };
-    }
-
     iteracao++;
   }
 
-  // Se atingiu o máximo de iterações
-  return {
-    resultado: {
-      raiz: c,
-      valorFuncao: fc,
-      iteracoes: maxIteracao,
-      convergiu: false,
-      erro: erro,
-      motivoParada: 'Número máximo de iterações atingido',
-      passos: passos
-    }
+  // Verifica se convergiu
+  if (erro <= tolerancia) {
+    convergiu = true;
+  }
+
+  const motivoParada = convergiu
+    ? 'Tolerância atingida'
+    : 'Número máximo de iterações atingido sem convergência.';
+
+  const resultado = {
+    valorFuncao: fc,
+    iteracoes: iteracao,
+    convergiu,
+    erro,
+    motivoParada,
+    passos: passos
   };
+
+  if (convergiu) {
+    resultado.raiz = c;
+  }
+
+  return { resultado };
 };
 
 module.exports = { metodoBisseccao };

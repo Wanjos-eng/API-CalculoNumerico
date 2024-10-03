@@ -1,4 +1,4 @@
-const math = require('mathjs'); // Importa a biblioteca mathjs
+const math = require('mathjs');
 const { validarParametros } = require('../services/validacaoParametros');
 
 const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
@@ -21,7 +21,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
         iteracoes: 0,
         convergiu: true,
         erro: 0,
-        motivoParada: 'Raiz exata encontrada',
+        motivoParada: 'Raiz exata encontrada no extremo inferior',
         passos: []
       }
     };
@@ -34,71 +34,72 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
         iteracoes: 0,
         convergiu: true,
         erro: 0,
-        motivoParada: 'Raiz exata encontrada',
+        motivoParada: 'Raiz exata encontrada no extremo superior',
         passos: []
       }
     };
-  } /*else if (fa * fb > 0) {  // Se ambos têm sinais iguais
-    throw new Error('Não há raiz no intervalo fornecido, f(a) e f(b) devem ter sinais opostos, a função deve mudar de sinal no intervalo dado.');
-  }*/
+  }
 
   let iteracao = 0;
-  let x, fx;
+  let x = a; // Inicializa x com a para evitar undefined
+  let fx = fa;
+  let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
+  let convergiu = false;
 
-  while (iteracao < maxIteracao) {
+  while (iteracao < maxIteracao && erro > tolerancia) {
     // Método da falsa posição
     x = (a * fb - b * fa) / (fb - fa);
     fx = math.evaluate(funcao, { x });
+    erro = Math.abs(fx);
+
+    // Descrição e atualização do intervalo
+    let descricao = '';
+    if (fa * fx < 0) {
+      descricao = `A função muda de sinal entre [${a}, ${x}]. Novo intervalo: [${a}, ${x}]`;
+      b = x;
+      fb = fx;
+    } else {
+      descricao = `A função muda de sinal entre [${x}, ${b}]. Novo intervalo: [${x}, ${b}]`;
+      a = x;
+      fa = fx;
+    }
 
     // Armazena os passos
     passos.push({
       iteracao: iteracao + 1,
       intervaloAtual: { a, b },
-      pontoFalsaPosicao: x,
-      valorFuncao: fx,
-      erro: Math.abs(fx),
-      descricao: 'Atualização do intervalo'
+      pontoAproximado: x,
+      valorFuncaoPonto: fx,
+      erro,
+      descricao
     });
-
-    // Verifica se a tolerância foi atingida
-    if (Math.abs(fx) < tolerancia || Math.abs(b - a) < tolerancia) {
-      return {
-        resultado: {
-          raiz: x,
-          valorFuncao: fx,
-          iteracoes: iteracao + 1,
-          convergiu: true,
-          erro: Math.abs(fx),
-          motivoParada: 'Tolerância atingida',
-          passos
-        }
-      };
-    }
-
-    // Atualiza os extremos do intervalo
-    if (fa * fx < 0) {
-      b = x;
-      fb = fx;
-    } else {
-      a = x;
-      fa = fx;
-    }
 
     iteracao++;
   }
 
-  // Caso não convergir dentro do número máximo de iterações
-  return {
-    resultado: {
-      raiz: x, // ou x, se quiser retornar o último valor de x calculado
-      valorFuncao: fx,
-      iteracoes: iteracao,
-      convergiu: false,
-      erro: Math.abs(fx),
-      motivoParada: 'Número máximo de iterações atingido sem convergência.',
-      passos
-    }
+  // Verifica se convergiu
+  if (erro <= tolerancia) {
+    convergiu = true;
+  }
+
+  const motivoParada = convergiu
+    ? 'Tolerância atingida'
+    : 'Número máximo de iterações atingido sem convergência.';
+
+  const resultado = {
+    valorFuncao: fx,
+    iteracoes: iteracao,
+    convergiu,
+    erro,
+    motivoParada,
+    passos
   };
+
+  if (convergiu) {
+    resultado.raiz = x;
+  }
+
+  return { resultado };
 };
 
 module.exports = { metodoFalsaPosicao };

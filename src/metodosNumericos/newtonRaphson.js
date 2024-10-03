@@ -12,40 +12,39 @@ const metodoNewtonRaphson = (funcao, chuteInicial, tolerancia, maxIteracao) => {
     derivadaSimbolica = math.derivative(funcao, 'x');
   } catch (error) {
     return {
-      error: 'Não foi possível calcular a derivada da função.',
-      iteracao: 0,
-      xAtual: chuteInicial,
-      valorFuncao: null
+      resultado: {
+        valorFuncao: f.evaluate({ x: chuteInicial }),
+        iteracoes: 0,
+        convergiu: false,
+        erro: null,
+        motivoParada: 'Não foi possível calcular a derivada da função.',
+        passos: []
+      }
     };
   }
 
   const df = derivadaSimbolica.compile();
 
   let x = chuteInicial;
-  let fx = f.evaluate({ x: x });
-  let dfx = df.evaluate({ x: x });
-
-  // Verificação se o valor da função é muito grande no chute inicial
-  if (Math.abs(fx) > 100) { // Ajuste este limite conforme necessário
-    return {
-      error: 'Chute inicial muito longe da raiz.',
-      iteracao: 0,
-      xAtual: x,
-      valorFuncao: fx
-    };
-  }
+  let fx = f.evaluate({ x });
+  let dfx = df.evaluate({ x });
 
   let iteracao = 0;
-  let erro = Math.abs(fx);
+  let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
+  let convergiu = false;
   let passos = [];
 
-  while (erro > tolerancia && iteracao < maxIteracao) {
+  while (iteracao < maxIteracao && erro > tolerancia) {
     if (Math.abs(dfx) < 1e-10) {
-      return { 
-        error: 'Derivada próxima de zero. Método falhou.',
-        iteracao: iteracao,
-        xAtual: x,
-        valorFuncao: fx
+      return {
+        resultado: {
+          valorFuncao: fx,
+          iteracoes: iteracao,
+          convergiu: false,
+          erro,
+          motivoParada: 'Derivada próxima de zero. Método falhou.',
+          passos
+        }
       };
     }
 
@@ -58,30 +57,40 @@ const metodoNewtonRaphson = (funcao, chuteInicial, tolerancia, maxIteracao) => {
       xAtual: x,
       valorFuncao: fx,
       derivada: dfx,
-      xNovo: xNovo,
-      erro: erro
+      xNovo,
+      erro,
+      descricao: `Iteração ${iteracao + 1}: x = ${xNovo}`
     });
 
     x = xNovo;
     fx = fxNovo;
-    dfx = df.evaluate({ x: xNovo });
+    dfx = df.evaluate({ x });
 
     iteracao++;
   }
 
-  const convergiu = erro < tolerancia;
-  const motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido';
+  // Verifica se convergiu
+  if (erro <= tolerancia) {
+    convergiu = true;
+  }
+
+  const motivoParada = convergiu
+    ? 'Tolerância atingida'
+    : 'Número máximo de iterações atingido sem convergência';
 
   const resultado = {
-    raiz: x,
     valorFuncao: fx,
     iteracoes: iteracao,
-    convergiu: convergiu,
-    erro: erro,
-    motivoParada: motivoParada,
+    convergiu,
+    erro,
+    motivoParada,
     derivada: derivadaSimbolica.toString(),
-    passos: passos
+    passos
   };
+
+  if (convergiu) {
+    resultado.raiz = x;
+  }
 
   return { resultado };
 };

@@ -12,11 +12,18 @@ const bisseccao = async (req, res) => {
   }
 
   try {
-    const resultado = metodoBisseccao(params.funcao, params.intervalo, params.tolerancia, params.maxIteracao);
+    const resultadoMetodo = metodoBisseccao(
+      params.funcao,
+      params.intervalo,
+      params.tolerancia,
+      params.maxIteracao
+    );
+
     // Salvar o contexto usando o userId do cookie
-    await salvarContexto(req.cookies.userId, { ...params, resultado });
+    await salvarContexto(req.cookies.userId, { ...params, resultado: resultadoMetodo.resultado });
+
     // Retornar o resultado ao cliente
-    return res.status(200).json({ resultado });
+    return res.status(200).json(resultadoMetodo);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

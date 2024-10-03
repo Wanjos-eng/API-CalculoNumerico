@@ -12,9 +12,16 @@ const secante = async (req, res) => {
   }
 
   try {
-    const resultado = metodoSecante(params.funcao, params.x0, params.x1, params.tolerancia, params.maxIteracao);
-    await salvarContexto(req.cookies.userId, { ...params, resultado });
-    return res.status(200).json({ resultado });
+    const resultadoMetodo = metodoSecante(
+      params.funcao,
+      params.intervalo,
+      params.tolerancia,
+      params.maxIteracao
+    );
+
+    await salvarContexto(req.cookies.userId, { ...params, resultado: resultadoMetodo.resultado });
+
+    return res.status(200).json(resultadoMetodo);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

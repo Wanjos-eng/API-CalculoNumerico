@@ -1,87 +1,103 @@
 const math = require('mathjs');
 const { validarParametros } = require('../services/validacaoParametros');
 
-const metodoSecante = (funcao, x0, x1, tolerancia, maxIteracao) => {
-    // Validação inicial dos parâmetros fornecidos
-    validarParametros('secante', { funcao, x0, x1, tolerancia, maxIteracao });
+const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
+  // Validação inicial dos parâmetros fornecidos
+  validarParametros('secante', { funcao, intervalo, tolerancia, maxIteracao });
 
-    // Inicializa variáveis para iterações e registro de passos
-    let iteracao = 0;
-    let erro = tolerancia + 1;
-    let xPrev = x0;
-    let xCurr = x1;
-    const passos = [];  // Armazena os passos de cada iteração
-    let raiz = xCurr; 
+  let [a, b] = intervalo;
+  const f = math.compile(funcao);
 
-    // Iteração do método da secante
-    while (erro > tolerancia && iteracao < maxIteracao) {
-        // Calcula o valor da função para os pontos atuais
-        const fXPrev = math.evaluate(funcao, { x: xPrev });
-        const fXCurr = math.evaluate(funcao, { x: xCurr });
+  let fa = f.evaluate({ x: a });
+  let fb = f.evaluate({ x: b });
+  let iteracao = 0;
+  let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
+  const passos = [];
+  let convergiu = false;
 
-        // Verifica se a função retorna um valor inválido (possível descontinuidade)
-        if (!isFinite(fXCurr) || !isFinite(fXPrev)) {
-            return {
-                raiz: xCurr, // Retorna o último valor calculado
-                valorFuncao: fXCurr,
-                iteracoes: iteracao,
-                convergiu: false,
-                erro: erro,
-                motivoParada: 'Descontinuidade detectada',
-                passos
-            };
+  while (iteracao < maxIteracao && erro > tolerancia) {
+    if (!isFinite(fa) || !isFinite(fb)) {
+      return {
+        resultado: {
+          valorFuncao: fb,
+          iteracoes: iteracao,
+          convergiu: false,
+          erro: null,
+          motivoParada: 'Descontinuidade detectada',
+          passos
         }
-
-        // Verifica divisão por zero com uma tolerância numérica pequena
-        if (Math.abs(fXCurr - fXPrev) < 1e-12) {
-            let motivoParada = 'Divisão por zero detectada';
-            if (Math.abs(fXCurr) < 1e-12 && Math.abs(fXPrev) < 1e-12) {
-                motivoParada = 'Raiz múltipla detectada';
-            }
-            return {
-                raiz: xCurr, // Retorna o último valor calculado
-                valorFuncao: fXCurr,
-                iteracoes: iteracao,
-                convergiu: false,
-                erro: erro,
-                motivoParada,
-                passos
-            };
-        }
-
-        // Fórmula do método da secante
-        const xNext = ((xPrev * fXCurr) - (xCurr * fXPrev)) / (fXCurr - fXPrev);
-
-        // Atualiza o erro e variáveis
-        erro = Math.abs(xNext - xCurr);
-
-        // Armazena os passos atuais
-        passos.push({ iteracao, xPrev, xCurr, xNext, fXPrev, fXCurr, erro });
-
-        // Atualiza as variáveis para a próxima iteração
-        xPrev = xCurr;
-        xCurr = xNext;
-
-        iteracao++;
+      };
     }
 
-    // Verifica se o método convergiu
-    const convergiu = erro <= tolerancia;
-    let motivoParada = convergiu ? 'Tolerância atingida' : 'Número máximo de iterações atingido';
+    if (Math.abs(fb - fa) < 1e-12) {
+      let motivoParada = 'Divisão por zero detectada';
+      if (Math.abs(fb) < 1e-12 && Math.abs(fa) < 1e-12) {
+        motivoParada = 'Raiz múltipla detectada';
+      }
+      return {
+        resultado: {
+          valorFuncao: fb,
+          iteracoes: iteracao,
+          convergiu: false,
+          erro: null,
+          motivoParada,
+          passos
+        }
+      };
+    }
 
-    // A raiz encontrada é o valor atual de xCurr
-    raiz = xCurr;
+    // Método da secante
+    const c = b - fb * (b - a) / (fb - fa);
+    const fc = f.evaluate({ x: c });
+    erro = Math.abs(c - b);
 
-    // Retorna os resultados desejados
-    return {
-        raiz, // Sempre retorna o último valor calculado
-        valorFuncao: math.evaluate(funcao, { x: raiz }),
-        iteracoes: iteracao,
-        convergiu,
-        erro,
-        motivoParada,
-        passos
-    };
+    // Descrição do passo atual
+    const descricao = `Iteração ${iteracao + 1}: Novo ponto calculado c = ${c}`;
+
+    // Armazena os passos
+    passos.push({
+      iteracao: iteracao + 1,
+      a,
+      b,
+      c,
+      fa,
+      fb,
+      erro,
+      descricao
+    });
+
+    // Atualiza as variáveis para a próxima iteração
+    a = b;
+    fa = fb;
+    b = c;
+    fb = fc;
+
+    iteracao++;
+  }
+
+  // Verifica se convergiu
+  if (erro <= tolerancia) {
+    convergiu = true;
+  }
+
+  const motivoParada = convergiu
+    ? 'Tolerância atingida'
+    : 'Número máximo de iterações atingido sem convergência';
+
+  const resultado = {
+    valorFuncao: fb,
+    iteracoes: iteracao,
+    convergiu,
+    erro,
+    motivoParada,
+    passos
+  };
+
+  if (convergiu) {
+    resultado.raiz = b;
+  }
+
+  return { resultado };
 };
 
 module.exports = { metodoSecante };
