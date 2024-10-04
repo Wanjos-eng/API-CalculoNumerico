@@ -20,7 +20,7 @@ const bisseccao = async (req, res) => {
     );
 
     // Salvar o contexto usando o userId do cookie
-    await salvarContexto(req.cookies.userId, { ...params, resultado: resultadoMetodo.resultado });
+    await salvarContexto(req.cookies.userId, { ...params, resultado: resultadoMetodo });
 
     // Retornar o resultado ao cliente
     return res.status(200).json(resultadoMetodo);

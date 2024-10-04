@@ -19,7 +19,7 @@ const falsaPosicao = async (req, res) => {
       params.maxIteracao
     );
 
-    await salvarContexto(req.cookies.userId, { ...params, resultado: resultadoMetodo.resultado });
+    await salvarContexto(req.cookies.userId, { ...params, resultado: resultadoMetodo });
 
     return res.status(200).json(resultadoMetodo);
   } catch (error) {

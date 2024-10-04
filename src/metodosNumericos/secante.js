@@ -46,13 +46,13 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
       };
     }
 
-    // Método da secante
+    // Método da Secante
     const c = b - fb * (b - a) / (fb - fa);
     const fc = f.evaluate({ x: c });
     erro = Math.abs(c - b);
 
-    // Descrição do passo atual
-    const descricao = `Iteração ${iteracao + 1}: Novo ponto calculado c = ${c}`;
+    // Descrição do passo atual, incluindo o intervalo atual [a, b]
+    const descricao = `Iteração ${iteracao + 1}: Intervalo atual [${a}, ${b}], novo ponto c = ${c}`;
 
     // Armazena os passos
     passos.push({
@@ -62,6 +62,7 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
       c,
       fa,
       fb,
+      fc,
       erro,
       descricao
     });
