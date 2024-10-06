@@ -39,8 +39,8 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
 1. **Clone o repositório:**
 
    ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/Wanjos-eng/API-CalculoNumerico
+   cd API-CalculoNumerico
    ```
 
 ## Configuração
@@ -66,6 +66,8 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
 
 ## Execução
 
+### Com o docker:
+
 1. **Construa e inicie os contêineres Docker:**
 
    ```bash
@@ -77,6 +79,20 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
 2. **Acesse a documentação Swagger para visualizar os endpoints:**
 
    Abra o navegador e navegue até `http://localhost:3000/docs`.
+
+### Sem o docker:
+
+1. **Inicie o ambiente virtual:**
+
+   ```bash
+   npm run dev
+   ```
+
+2. **Em caso de erro execute o comando para configurar o ambiente:**
+
+   ```bash
+   npm run setup
+   ```
 
 ## Endpoints
 
@@ -93,7 +109,21 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
 
 ## Uso
 
-### 1. Executar um método numérico
+### 1. Como usar o Postman (ou Insomnia) para fazer uma requisição POST:
+
+- Você pode baixar e instalar o Postman [aqui](https://www.postman.com/downloads/).
+- Após instalar e abrir o Postman, você verá uma tela para criar uma nova requisição.
+- Clique no botão New no canto superior esquerdo.
+- Selecione HTTP Request.
+- No campo à esquerda da URL, altere o método para POST.
+- No campo ao lado do método POST, insira a URL do endpoint (exemplo: http://localhost:3000/newton-raphson).
+- Clique na aba Body abaixo do campo de URL.
+- Selecione a opção raw.
+- No menu suspenso à direita, selecione o tipo de dados que será enviado, geralmente JSON.
+- Insira os dados no formato JSON que serão enviados na requisição, como na parte 2 a seguir.
+- É importante verificar na documentação o formato correto para fazer a requesição.
+
+### 2. Executar um método numérico
 
 Faça uma requisição `POST` para um dos endpoints dos métodos, fornecendo os parâmetros necessários no corpo da requisição.
 
@@ -111,7 +141,7 @@ Content-Type: application/json
 }
 ```
 
-### 2. Fazer uma pergunta para a IA
+### 3. Fazer uma pergunta para a IA
 
 Após executar um método numérico, faça uma requisição `POST` para `/ia/perguntar`, fornecendo a sua pergunta.
 

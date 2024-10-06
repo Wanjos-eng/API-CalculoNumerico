@@ -5,6 +5,14 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Valida os parâmetros de entrada
   validarParametros('falsaPosicao', { funcao, intervalo, tolerancia, maxIteracao });
 
+  function obterCasasDecimais(tolerancia) {
+    const strTolerancia = tolerancia.toString();
+    if (strTolerancia.includes('.')) {
+        return strTolerancia.split('.')[1].length;
+    }
+    return 0; // Se a tolerância for um número inteiro, não há casas decimais.
+  }
+
   let [a, b] = intervalo;
   let fa = math.evaluate(funcao, { x: a });
   let fb = math.evaluate(funcao, { x: b });
@@ -45,8 +53,9 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let fx = fa;
   let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
   let convergiu = false;
+  let n = obterCasasDecimais(tolerancia);
 
-  while (iteracao < maxIteracao && erro > tolerancia) {
+  while (iteracao < maxIteracao && Number(erro.toFixed(n)) > Number(tolerancia.toFixed(n))) {
     // Método da falsa posição
     x = (a * fb - b * fa) / (fb - fa);
     fx = math.evaluate(funcao, { x });
@@ -78,7 +87,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   // Verifica se convergiu
-  if (erro <= tolerancia) {
+  if (erro.toFixed(n) <= tolerancia.toFixed(n)) {
     convergiu = true;
   }
 

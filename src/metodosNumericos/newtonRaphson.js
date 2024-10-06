@@ -4,6 +4,14 @@ const { validarParametros } = require('../services/validacaoParametros');
 const metodoNewtonRaphson = (funcao, chuteInicial, tolerancia, maxIteracao) => {
   validarParametros('newtonRaphson', { funcao, chuteInicial, tolerancia, maxIteracao });
 
+  function obterCasasDecimais(tolerancia) {
+    const strTolerancia = tolerancia.toString();
+    if (strTolerancia.includes('.')) {
+        return strTolerancia.split('.')[1].length;
+    }
+    return 0; // Se a tolerância for um número inteiro, não há casas decimais.
+  }
+
   const f = math.compile(funcao);
 
   // Calcular a derivada simbolicamente
@@ -33,8 +41,9 @@ const metodoNewtonRaphson = (funcao, chuteInicial, tolerancia, maxIteracao) => {
   let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
   let convergiu = false;
   let passos = [];
+  let n = obterCasasDecimais(tolerancia);
 
-  while (iteracao < maxIteracao && erro > tolerancia) {
+  while (iteracao < maxIteracao && Number(erro.toFixed(n)) > Number(tolerancia.toFixed(n))) {
     if (Math.abs(dfx) < 1e-10) {
       return {
         resultado: {
@@ -50,7 +59,7 @@ const metodoNewtonRaphson = (funcao, chuteInicial, tolerancia, maxIteracao) => {
 
     const xNovo = x - fx / dfx;
     const fxNovo = f.evaluate({ x: xNovo });
-    erro = Math.abs(xNovo - x);
+    erro = Math.abs(fxNovo);
 
     passos.push({
       iteracao: iteracao + 1,
@@ -70,7 +79,7 @@ const metodoNewtonRaphson = (funcao, chuteInicial, tolerancia, maxIteracao) => {
   }
 
   // Verifica se convergiu
-  if (erro <= tolerancia) {
+  if (erro.toFixed(n) <= tolerancia.toFixed(n)) {
     convergiu = true;
   }
 

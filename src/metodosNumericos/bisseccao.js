@@ -5,6 +5,14 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Validações de entrada
   validarParametros('bisseccao', { funcao, intervalo, tolerancia, maxIteracao });
 
+  function obterCasasDecimais(tolerancia) {
+    const strTolerancia = tolerancia.toString();
+    if (strTolerancia.includes('.')) {
+        return strTolerancia.split('.')[1].length;
+    }
+    return 0; // Se a tolerância for um número inteiro, não há casas decimais.
+  }
+
   // Compilando a função recebida
   const f = math.compile(funcao);
   let [a, b] = intervalo;
@@ -46,12 +54,13 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let fc = fa;
   let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
   let convergiu = false;
+  let n = obterCasasDecimais(tolerancia);
 
-  while (iteracao < maxIteracao && erro > tolerancia) {
+  while (iteracao < maxIteracao && Number(erro.toFixed(n)) > Number(tolerancia.toFixed(n))) {
     // Calculando o ponto médio
     c = (a + b) / 2;
     fc = f.evaluate({ x: c });
-    erro = Math.abs(b - a) / 2;
+    erro = Math.abs(fc);
 
     // Verifica se há descontinuidade no ponto médio
     if (!isFinite(fc) || isNaN(fc)) {
@@ -95,7 +104,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   // Verifica se convergiu
-  if (erro <= tolerancia) {
+  if (erro.toFixed(n) <= tolerancia.toFixed(n)) {
     convergiu = true;
   }
 

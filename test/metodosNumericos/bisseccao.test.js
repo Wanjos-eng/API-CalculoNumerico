@@ -30,7 +30,7 @@ describe('Método da Bissecção', () => {
 
     expect(resultado.resultado.convergiu).toBe(true);
     expect(resultado.resultado.raiz).toBeCloseTo(1, 3);
-    expect(resultado.resultado.motivoParada).toBe('Raiz encontrada no extremo do intervalo');
+    expect(resultado.resultado.motivoParada).toBe('Raiz encontrada no extremo inferior do intervalo');
   });
 
   // Caso de Teste 3: Função Sem Raiz no Intervalo (f(a) * f(b) > 0)
