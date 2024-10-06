@@ -5,6 +5,14 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Validação inicial dos parâmetros fornecidos
   validarParametros('secante', { funcao, intervalo, tolerancia, maxIteracao });
 
+  function obterCasasDecimais(tolerancia) {
+    const strTolerancia = tolerancia.toString();
+    if (strTolerancia.includes('.')) {
+        return strTolerancia.split('.')[1].length;
+    }
+    return 0; // Se a tolerância for um número inteiro, não há casas decimais.
+  }
+
   let [a, b] = intervalo;
   const f = math.compile(funcao);
 
@@ -14,12 +22,13 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
   let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
   const passos = [];
   let convergiu = false;
+  let n = obterCasasDecimais(tolerancia);
 
-  while (iteracao < maxIteracao && erro > tolerancia) {
+  while (iteracao < maxIteracao && Number(erro.toFixed(n)) >= Number(tolerancia.toFixed(n))) {
     if (!isFinite(fa) || !isFinite(fb)) {
       return {
         resultado: {
-          valorFuncao: fb,
+          fxAprox: fb,
           iteracoes: iteracao,
           convergiu: false,
           erro: null,
@@ -36,7 +45,7 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
       }
       return {
         resultado: {
-          valorFuncao: fb,
+          fxAprox: fb,
           iteracoes: iteracao,
           convergiu: false,
           erro: null,
@@ -49,20 +58,23 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
     // Método da Secante
     const c = b - fb * (b - a) / (fb - fa);
     const fc = f.evaluate({ x: c });
-    erro = Math.abs(c - b);
+    erro = Math.abs(fc);
 
     // Descrição do passo atual, incluindo o intervalo atual [a, b]
     const descricao = `Iteração ${iteracao + 1}: Intervalo atual [${a}, ${b}], novo ponto c = ${c}`;
+
+    fxAprox=fc
+    xAprox=c
 
     // Armazena os passos
     passos.push({
       iteracao: iteracao + 1,
       a,
       b,
-      c,
+      xAprox,
       fa,
       fb,
-      fc,
+      fxAprox,
       erro,
       descricao
     });
@@ -77,7 +89,7 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   // Verifica se convergiu
-  if (erro <= tolerancia) {
+  if (erro.toFixed(n) <= tolerancia.toFixed(n)) {
     convergiu = true;
   }
 
@@ -86,7 +98,7 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
     : 'Número máximo de iterações atingido sem convergência';
 
   const resultado = {
-    valorFuncao: fb,
+    fxAprox: fb,
     iteracoes: iteracao,
     convergiu,
     erro,

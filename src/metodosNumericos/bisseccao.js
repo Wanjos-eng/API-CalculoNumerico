@@ -5,6 +5,14 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   // Validações de entrada
   validarParametros('bisseccao', { funcao, intervalo, tolerancia, maxIteracao });
 
+  function obterCasasDecimais(tolerancia) {
+    const strTolerancia = tolerancia.toString();
+    if (strTolerancia.includes('.')) {
+        return strTolerancia.split('.')[1].length;
+    }
+    return 0; // Se a tolerância for um número inteiro, não há casas decimais.
+  }
+
   // Compilando a função recebida
   const f = math.compile(funcao);
   let [a, b] = intervalo;
@@ -16,7 +24,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     return {
       resultado: {
         raiz: a,
-        valorFuncao: fa,
+        fxAprox: fa,
         iteracoes: 0,
         convergiu: true,
         erro: 0,
@@ -30,7 +38,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     return {
       resultado: {
         raiz: b,
-        valorFuncao: fb,
+        fxAprox: fb,
         iteracoes: 0,
         convergiu: true,
         erro: 0,
@@ -46,18 +54,19 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let fc = fa;
   let erro = tolerancia + 1; // Inicializa erro com um valor maior que a tolerância
   let convergiu = false;
+  let n = obterCasasDecimais(tolerancia);
 
-  while (iteracao < maxIteracao && erro > tolerancia) {
+  while (iteracao < maxIteracao && Number(erro.toFixed(n)) > Number(tolerancia.toFixed(n))) {
     // Calculando o ponto médio
     c = (a + b) / 2;
     fc = f.evaluate({ x: c });
-    erro = Math.abs(b - a) / 2;
+    erro = Math.abs(fc);
 
     // Verifica se há descontinuidade no ponto médio
     if (!isFinite(fc) || isNaN(fc)) {
       return {
         resultado: {
-          valorFuncao: fc,
+          fxAprox: fc,
           iteracoes: iteracao + 1,
           convergiu: false,
           erro: null,
@@ -85,8 +94,8 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     passos.push({
       iteracao: iteracao + 1,
       intervaloAtual: { a: intervaloAtual.a, b: intervaloAtual.b },
-      pontoMedio: c,
-      valorFuncao: fc,
+      xAprox: c,
+      fxAprox: fc,
       erro: erro,
       descricao: descricao
     });
@@ -95,7 +104,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
   }
 
   // Verifica se convergiu
-  if (erro <= tolerancia) {
+  if (erro.toFixed(n) <= tolerancia.toFixed(n)) {
     convergiu = true;
   }
 
@@ -104,7 +113,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     : 'Número máximo de iterações atingido sem convergência.';
 
   const resultado = {
-    valorFuncao: fc,
+    fxAprox: fc,
     iteracoes: iteracao,
     convergiu,
     erro,
