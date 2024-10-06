@@ -7,7 +7,7 @@ const { validarParametros } = require('../services/validacaoParametros');
 
 const metodosNumericos = {
   bisseccao: metodoBisseccao,
-  falsaPosicao: metodoFalsaPosicao,
+  fp: metodoFalsaPosicao,
   newtonRaphson: metodoNewtonRaphson,
   secante: metodoSecante,
 };
@@ -46,7 +46,7 @@ const validarTransicaoMetodo = (contextoAnterior, metodoEscolhido, params) => {
     throw new Error('Não foi possível obter os dados do último passo do método anterior.');
   }
 
-  const metodosQueRequeremIntervalo = ['bisseccao', 'falsaPosicao', 'secante'];
+  const metodosQueRequeremIntervalo = ['bisseccao', 'fp', 'secante'];
 
   if (metodosQueRequeremIntervalo.includes(metodoEscolhido)) {
     // Se o método anterior foi Newton-Raphson, precisamos que o usuário forneça o intervalo
