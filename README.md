@@ -121,7 +121,7 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
 - Selecione a opção raw.
 - No menu suspenso à direita, selecione o tipo de dados que será enviado, geralmente JSON.
 - Insira os dados no formato JSON que serão enviados na requisição, como na parte 2 a seguir.
-- É importante verificar na documentação o formato correto para fazer a requesição.
+- É importante verificar na documentação o formato correto para fazer a requisição.
 
 ### 2. Executar um método numérico
 

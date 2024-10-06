@@ -24,7 +24,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     return {
       resultado: {
         raiz: a,
-        valorFuncao: fa,
+        fxAprox: fa,
         iteracoes: 0,
         convergiu: true,
         erro: 0,
@@ -38,7 +38,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     return {
       resultado: {
         raiz: b,
-        valorFuncao: fb,
+        fxAprox: fb,
         iteracoes: 0,
         convergiu: true,
         erro: 0,
@@ -66,7 +66,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     if (!isFinite(fc) || isNaN(fc)) {
       return {
         resultado: {
-          valorFuncao: fc,
+          fxAprox: fc,
           iteracoes: iteracao + 1,
           convergiu: false,
           erro: null,
@@ -94,8 +94,8 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     passos.push({
       iteracao: iteracao + 1,
       intervaloAtual: { a: intervaloAtual.a, b: intervaloAtual.b },
-      pontoMedio: c,
-      valorFuncao: fc,
+      xAprox: c,
+      fxAprox: fc,
       erro: erro,
       descricao: descricao
     });
@@ -113,7 +113,7 @@ const metodoBisseccao = (funcao, intervalo, tolerancia, maxIteracao) => {
     : 'Número máximo de iterações atingido sem convergência.';
 
   const resultado = {
-    valorFuncao: fc,
+    fxAprox: fc,
     iteracoes: iteracao,
     convergiu,
     erro,

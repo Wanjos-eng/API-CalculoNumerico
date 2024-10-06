@@ -28,7 +28,7 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
     if (!isFinite(fa) || !isFinite(fb)) {
       return {
         resultado: {
-          valorFuncao: fb,
+          fxAprox: fb,
           iteracoes: iteracao,
           convergiu: false,
           erro: null,
@@ -45,7 +45,7 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
       }
       return {
         resultado: {
-          valorFuncao: fb,
+          fxAprox: fb,
           iteracoes: iteracao,
           convergiu: false,
           erro: null,
@@ -63,15 +63,18 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
     // Descrição do passo atual, incluindo o intervalo atual [a, b]
     const descricao = `Iteração ${iteracao + 1}: Intervalo atual [${a}, ${b}], novo ponto c = ${c}`;
 
+    fxAprox=fc
+    xAprox=c
+
     // Armazena os passos
     passos.push({
       iteracao: iteracao + 1,
       a,
       b,
-      c,
+      xAprox,
       fa,
       fb,
-      fc,
+      fxAprox,
       erro,
       descricao
     });
@@ -95,7 +98,7 @@ const metodoSecante = (funcao, intervalo, tolerancia, maxIteracao) => {
     : 'Número máximo de iterações atingido sem convergência';
 
   const resultado = {
-    valorFuncao: fb,
+    fxAprox: fb,
     iteracoes: iteracao,
     convergiu,
     erro,

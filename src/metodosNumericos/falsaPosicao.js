@@ -25,7 +25,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
     return {
       resultado: {
         raiz: a,
-        valorFuncao: fa,
+        fxAprox: fa,
         iteracoes: 0,
         convergiu: true,
         erro: 0,
@@ -38,7 +38,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
     return {
       resultado: {
         raiz: b,
-        valorFuncao: fb,
+        fxAprox: fb,
         iteracoes: 0,
         convergiu: true,
         erro: 0,
@@ -77,8 +77,8 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
     passos.push({
       iteracao: iteracao + 1,
       intervaloAtual: { a, b },
-      pontoAproximado: x,
-      valorFuncaoPonto: fx,
+      xAprox: x,
+      fxAprox: fx,
       erro,
       descricao
     });
@@ -96,7 +96,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
     : 'Número máximo de iterações atingido sem convergência.';
 
   const resultado = {
-    valorFuncao: fx,
+    fxAprox: fx,
     iteracoes: iteracao,
     convergiu,
     erro,

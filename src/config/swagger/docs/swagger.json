@@ -62,7 +62,7 @@
                   "type": "object",
                   "properties": {
                     "raiz": { "type": "number" },
-                    "valorFuncao": { "type": "number" },
+                    "fxAprox": { "type": "number" },
                     "iteracoes": { "type": "integer" },
                     "convergiu": { "type": "boolean" },
                     "erro": { "type": "number" },
@@ -80,8 +80,8 @@
                               "b": { "type": "number" }
                             }
                           },
-                          "pontoMedio": { "type": "number" },
-                          "valorFuncao": { "type": "number" },
+                          "xAprox": { "type": "number" },
+                          "fxAprox": { "type": "number" },
                           "erro": { "type": "number" },
                           "descricao": { "type": "string" }
                         }
@@ -93,7 +93,7 @@
                   "Exemplo": {
                     "value": {
                       "raiz": 1.521,
-                      "valorFuncao": -0.0001,
+                      "fxAprox": -0.0001,
                       "iteracoes": 10,
                       "convergiu": true,
                       "erro": 0.0005,
@@ -102,8 +102,8 @@
                         {
                           "iteracao": 1,
                           "intervaloAtual": { "a": 1.0, "b": 2.0 },
-                          "pontoMedio": 1.5,
-                          "valorFuncao": -0.125,
+                          "xAprox": 1.5,
+                          "fxAprox": -0.125,
                           "erro": 0.5,
                           "descricao": "A função muda de sinal entre [1.5, 2.0]. Novo intervalo: [1.5, 2.0]"
                         }
@@ -165,7 +165,7 @@
                   "type": "object",
                   "properties": {
                     "raiz": { "type": "number" },
-                    "valorFuncao": { "type": "number" },
+                    "fxAprox": { "type": "number" },
                     "iteracoes": { "type": "integer" },
                     "convergiu": { "type": "boolean" },
                     "erro": { "type": "number" },
@@ -183,8 +183,8 @@
                               "b": { "type": "number" }
                             }
                           },
-                          "pontoAproximado": { "type": "number" },
-                          "valorFuncao": { "type": "number" },
+                          "xAprox": { "type": "number" },
+                          "fxAprox": { "type": "number" },
                           "erro": { "type": "number" },
                           "descricao": { "type": "string" }
                         }
@@ -196,7 +196,7 @@
                   "Exemplo": {
                     "value": {
                       "raiz": 1.521,
-                      "valorFuncao": -0.0001,
+                      "fxAprox": -0.0001,
                       "iteracoes": 8,
                       "convergiu": true,
                       "erro": 0.0003,
@@ -205,8 +205,8 @@
                         {
                           "iteracao": 1,
                           "intervaloAtual": { "a": 1.0, "b": 2.0 },
-                          "pontoAproximado": 1.5385,
-                          "valorFuncao": 0.094,
+                          "xAprox": 1.5385,
+                          "fxAprox": 0.094,
                           "erro": 0.4615,
                           "descricao": "A função muda de sinal entre [1.0, 1.5385]. Novo intervalo: [1.0, 1.5385]"
                         }
@@ -253,7 +253,7 @@
                   "type": "object",
                   "properties": {
                     "raiz": { "type": "number" },
-                    "valorFuncao": { "type": "number" },
+                    "fxAprox": { "type": "number" },
                     "iteracoes": { "type": "integer" },
                     "convergiu": { "type": "boolean" },
                     "erro": { "type": "number" },
@@ -266,10 +266,10 @@
                         "properties": {
                           "iteracao": { "type": "integer" },
                           "xAtual": { "type": "number" },
-                          "valorFuncao": { "type": "number" },
+                          "fxAtual": { "type": "number" },
                           "derivada": { "type": "number" },
-                          "xNovo": { "type": "number" },
-                          "erro": { "type": "number" },
+                          "xAprox": { "type": "number" },
+                          "fxAprox": { "type": "number" },
                           "descricao": { "type": "string" }
                         }
                       }
@@ -280,7 +280,7 @@
                   "Exemplo": {
                     "value": {
                       "raiz": 1.521,
-                      "valorFuncao": 0.0,
+                      "fxAprox": 0.0,
                       "iteracoes": 5,
                       "convergiu": true,
                       "erro": 0.0001,
@@ -290,10 +290,10 @@
                         {
                           "iteracao": 1,
                           "xAtual": 1.5,
-                          "valorFuncao": -0.125,
+                          "fxAtual": -0.125,
                           "derivada": 5.75,
-                          "xNovo": 1.5217,
-                          "erro": 0.0217,
+                          "xAprox": 1.5217,
+                          "fxAprox": 0.0217,
                           "descricao": "Calculado xNovo = 1.5217"
                         }
                       ]
@@ -351,7 +351,7 @@
                   "type": "object",
                   "properties": {
                     "raiz": { "type": "number" },
-                    "valorFuncao": { "type": "number" },
+                    "fxAprox": { "type": "number" },
                     "iteracoes": { "type": "integer" },
                     "convergiu": { "type": "boolean" },
                     "erro": { "type": "number" },
@@ -364,10 +364,10 @@
                           "iteracao": { "type": "integer" },
                           "a": { "type": "number" },
                           "b": { "type": "number" },
-                          "c": { "type": "number" },
+                          "xAprox": { "type": "number" },
                           "fa": { "type": "number" },
                           "fb": { "type": "number" },
-                          "fc": { "type": "number" },
+                          "fxAprox": { "type": "number" },
                           "erro": { "type": "number" },
                           "descricao": { "type": "string" }
                         }
@@ -379,7 +379,7 @@
                   "Exemplo": {
                     "value": {
                       "raiz": 1.521,
-                      "valorFuncao": -0.0001,
+                      "fxAprox": -0.0001,
                       "iteracoes": 6,
                       "convergiu": true,
                       "erro": 0.0002,
@@ -389,10 +389,10 @@
                           "iteracao": 1,
                           "a": 1.0,
                           "b": 2.0,
-                          "c": 1.5385,
+                          "xAprox": 1.5385,
                           "fa": -2.0,
                           "fb": 2.0,
-                          "fc": 0.094,
+                          "fxAprox": 0.094,
                           "erro": 0.4615,
                           "descricao": "Iteração 1: Intervalo atual [1.0, 2.0], novo ponto c = 1.5385"
                         }
