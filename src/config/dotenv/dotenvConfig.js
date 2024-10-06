@@ -8,8 +8,8 @@ module.exports = {
     : [],
   environment: process.env.ENVIRONMENT || 'development',
   cookieOptions: {
-    httpOnly: process.env.COOKIE_HTTPONLY === 'true', // Converte para booleano
-    secure: process.env.COOKIE_SECURE === 'true', // Converte para booleano
-    sameSite: process.env.COOKIE_SAMESITE || 'Lax', // Usa a configuração de SameSite
+    httpOnly: process.env.COOKIE_HTTPONLY,
+    secure: process.env.COOKIE_SECURE, 
+    sameSite: process.env.COOKIE_SAMESITE // Usa a configuração de SameSite
   },
 };
