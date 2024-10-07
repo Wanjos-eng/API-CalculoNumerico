@@ -53,6 +53,11 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
     REDIS_HOST=
     REDIS_PORT=
     REDIS_PASSWORD=
+    ALLOWED_ORIGINS=
+    COOKIE_HTTPONLY=
+    COOKIE_SECURE=
+    COOKIE_SAMESITE=
+    ENVIRONMENT=
    ```
 
    - **GEMINI_KEY**: Obtenha sua chave de API no [Google AI Studio](https://studio.ai.google/).
@@ -76,9 +81,11 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
 
    - Isso irá construir a imagem Docker da aplicação e iniciar o contêiner.
 
-2. **Acesse a documentação Swagger para visualizar os endpoints:**
+2. **Acesse a documentação Swagger para visualizar os endpoints e exemplos de como ultilizar:**
 
    Abra o navegador e navegue até `http://localhost:3000/docs`.
+   ou
+   navegue até `https://api-calculonumerico.onrender.com/docs`.
 
 ### Sem o docker:
 
@@ -106,6 +113,10 @@ Este repositório contém uma API desenvolvida em Node.js que implementa método
 ### Interação com a IA
 
 - **POST** `/perguntar`
+
+### Troca de um metodo para outro
+
+- **POST** `/continuarSolucao`
 
 ## Uso
 
@@ -158,6 +169,23 @@ Content-Type: application/json
 
 A IA irá responder com base no contexto do cálculo que você executou anteriormente.
 
+### 4. Fazer a troca de um metodo a outro
+
+Após executar um método numérico, faça uma requisição `POST` para `/ia/perguntar`, fornecendo a sua pergunta.
+
+**Exemplo de requisição:**
+
+```http
+POST /continuarSolucao
+Content-Type: application/json
+
+{
+  "metodoEscolhido": "falsaPosicao",
+  "novasIteracoes": 10,
+}
+```
+
+A o metodo irá continuar com base no contexto do cálculo que você executou anteriormente.
 
 ## Contribuição
 
