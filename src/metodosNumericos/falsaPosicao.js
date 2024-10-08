@@ -34,6 +34,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
       }
     };
   }
+
   if (fb === 0) {
     return {
       resultado: {
