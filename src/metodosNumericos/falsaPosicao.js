@@ -57,6 +57,10 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
   let n = obterCasasDecimais(tolerancia);
 
   while (iteracao < maxIteracao && Number(erro.toFixed(n)) > Number(tolerancia.toFixed(n))) {
+
+    const aAnterior = a;
+    const bAnterior = b;
+
     // Método da falsa posição
     x = (a * fb - b * fa) / (fb - fa);
     fx = math.evaluate(funcao, { x });
@@ -77,7 +81,7 @@ const metodoFalsaPosicao = (funcao, intervalo, tolerancia, maxIteracao) => {
     // Armazena os passos
     passos.push({
       iteracao: iteracao + 1,
-      intervaloAtual: { a, b },
+      intervaloAtual: { a: aAnterior, b: bAnterior },
       xAprox: x,
       fxAprox: fx,
       erro,
